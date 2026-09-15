@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Isaiah Bomfim</title>
+<style>
+  :root{
+    --paper:#F6F4EF;
+    --paper-raised:#FFFFFF;
+    --ink:#20242B;
+    --ink-muted:#5B6570;
+    --ink-faint:#8B9099;
+    --accent:#2F5D62;
+    --accent-ink:#F6F4EF;
+    --accent-2:#B8722E;
+    --line:#DBD6C9;
+    --line-strong:#C7C1B2;
+    --shadow: 0 1px 2px rgba(32,36,43,.05), 0 6px 20px rgba(32,36,43,.06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#15181A;
+      --paper-raised:#1C2023;
+      --ink:#E9E6DE;
+      --ink-muted:#A7ACA5;
+      --ink-faint:#767C77;
+      --accent:#7FBCB5;
+      --accent-ink:#10201F;
+      --accent-2:#E0A45C;
+      --line:#2B3230;
+      --line-strong:#3A423F;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#15181A;
+    --paper-raised:#1C2023;
+    --ink:#E9E6DE;
+    --ink-muted:#A7ACA5;
+    --ink-faint:#767C77;
+    --accent:#7FBCB5;
+    --accent-ink:#10201F;
+    --accent-2:#E0A45C;
+    --line:#2B3230;
+    --line-strong:#3A423F;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+
+  @font-face{ font-family:'sys'; src:local(sans-serif); }
+  *{ box-sizing:border-box; }
+  html,body{ background:var(--paper); }
+  body{
+    margin:0;
+    padding-inline:24px;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{ color:inherit; }
+  .wrap{ max-width:920px; margin:0 auto; }
+
+  h1,h2,h3{ font-family:"Fraunces","Iowan Old Style",Georgia,serif; font-weight:600; text-wrap:balance; margin:0; }
+
+  .mono{ font-family:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace; font-variant-numeric:tabular-nums; }
+
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky; top:env(safe-area-inset-top,0px);
+    display:flex; align-items:center; justify-content:space-between;
+    padding-block:16px;
+    background:color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter:blur(6px);
+    z-index:10;
+    border-bottom:1px solid transparent;
+  }
+  nav.scrolled{ border-bottom-color:var(--line); }
+  .brand{ font-family:"Fraunces",serif; font-weight:600; font-size:17px; letter-spacing:.2px; }
+  .navlinks{ display:flex; gap:22px; font-size:13.5px; }
+  .navlinks a{ text-decoration:none; color:var(--ink-muted); }
+  .navlinks a:hover{ color:var(--accent); }
+
+  /* ---------- hero ---------- */
+  header.hero{ padding-block:56px 40px; }
+  .eyebrow{
+    font-size:13px; color:var(--ink-muted); margin-bottom:10px; display:block;
+  }
+  h1.name{ font-size:clamp(36px,7vw,58px); line-height:1.02; }
+  .role{ margin-top:10px; font-size:17px; color:var(--ink-muted); max-width:60ch; }
+  .bio{ margin-top:18px; font-size:16px; line-height:1.65; color:var(--ink); max-width:62ch; }
+
+  .cta-row{ display:flex; gap:12px; flex-wrap:wrap; margin-top:26px; }
+  .btn{
+    font-size:14px; padding:10px 18px; border-radius:3px; text-decoration:none;
+    font-weight:600; letter-spacing:.2px; display:inline-flex; align-items:center; gap:8px;
+    border:1px solid var(--line-strong);
+  }
+  .btn.primary{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .btn.primary:hover{ opacity:.9; }
+  .btn.ghost{ color:var(--ink); }
+  .btn.ghost:hover{ border-color:var(--accent); color:var(--accent); }
+
+  .stat-strip{
+    margin-top:40px; display:grid; grid-template-columns:repeat(3,1fr); gap:0;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  .stat{ padding:16px 6px; border-left:1px solid var(--line); }
+  .stat:first-child{ border-left:none; padding-left:0; }
+  .stat .n{ font-size:26px; font-weight:600; }
+  .stat .l{ font-size:12px; color:var(--ink-muted); margin-top:4px; }
+
+  /* ---------- sections ---------- */
+  section{ padding-block:44px; border-top:1px solid var(--line); }
+  .section-head{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:26px; flex-wrap:wrap; }
+  .section-num{ font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-faint); }
+  h2.section-title{ font-size:26px; }
+
+  /* ---------- projects ---------- */
+  .projects{ display:grid; grid-template-columns:1fr; gap:18px; }
+  .card{
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:4px;
+    padding:24px; box-shadow:var(--shadow);
+  }
+  .card.live{ border-left:3px solid var(--accent); }
+  .card-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .card h3{ font-size:20px; }
+  .status{
+    font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.8px; text-transform:uppercase;
+    padding:3px 8px; border-radius:20px; white-space:nowrap;
+  }
+  .status.live{ background:color-mix(in srgb, var(--accent) 16%, transparent); color:var(--accent); }
+  .status.soon{ background:transparent; border:1px dashed var(--line-strong); color:var(--ink-faint); }
+  .card p.desc{ margin:12px 0 14px; font-size:14.5px; line-height:1.6; color:var(--ink-muted); max-width:68ch; }
+  .tags{ font-size:13px; color:var(--ink-muted); margin-bottom:14px; }
+  .findings{ margin:0 0 16px; padding:0; list-style:none; display:grid; gap:6px; }
+  .findings li{ font-size:13.5px; color:var(--ink); padding-left:16px; position:relative; line-height:1.55; }
+  .findings li::before{ content:"\2022"; position:absolute; left:0; color:var(--accent); }
+  .card-links{ display:flex; gap:16px; font-size:13.5px; }
+  .card-links a{ text-decoration:none; color:var(--accent); font-weight:600; }
+  .card-links a:hover{ text-decoration:underline; }
+
+  .card.placeholder{ border-left:3px dashed var(--line-strong); box-shadow:none; }
+  .card.placeholder h3{ color:var(--ink-faint); }
+  .card.placeholder p.desc{ color:var(--ink-faint); }
+
+  /* ---------- resume ---------- */
+  .resume-grid{ display:grid; grid-template-columns:1.3fr 1fr; gap:32px; }
+  .resume-block + .resume-block{ margin-top:22px; }
+  .resume-block h4{
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:1px; text-transform:uppercase;
+    color:var(--accent); margin:0 0 10px;
+  }
+  .resume-role{ font-size:15px; font-weight:600; }
+  .resume-meta{ font-size:13px; color:var(--ink-muted); margin-top:2px; }
+  .resume-block ul{ margin:10px 0 0; padding-left:18px; }
+  .resume-block li{ font-size:13.5px; line-height:1.6; color:var(--ink); margin-bottom:5px; }
+  .skills-box{
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:4px; padding:20px;
+    align-self:start;
+  }
+  .skills-box h4{ font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); margin:0 0 12px; }
+  .skill-tags{ font-size:13.5px; color:var(--ink); line-height:1.7; margin-bottom:20px; }
+  .dl-resume{ width:100%; justify-content:center; }
+
+  /* ---------- contact ---------- */
+  .contact-row{ display:flex; flex-wrap:wrap; gap:14px; }
+  .contact-card{
+    flex:1 1 220px; background:var(--paper-raised); border:1px solid var(--line); border-radius:4px;
+    padding:18px 20px; text-decoration:none; display:flex; flex-direction:column; gap:4px;
+  }
+  .contact-card:hover{ border-color:var(--accent); }
+  .contact-card .k{ font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:1px; text-transform:uppercase; color:var(--ink-faint); }
+  .contact-card .v{ font-size:14.5px; font-weight:600; color:var(--ink); word-break:break-word; }
+  .contact-card.pending .v{ color:var(--ink-faint); font-weight:500; font-style:italic; }
+
+  footer{ padding-block:28px 40px; text-align:center; color:var(--ink-faint); font-size:12.5px; }
+
+  @media (max-width:640px){
+    .stat-strip{ grid-template-columns:1fr; }
+    .stat{ border-left:none; border-top:1px solid var(--line); padding-left:0; }
+    .stat:first-child{ border-top:none; }
+    .resume-grid{ grid-template-columns:1fr; }
+    .navlinks{ gap:14px; }
+  }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+</head>
+<body>
+
+
+<div class="wrap">
+
+  <nav id="nav">
+    <div class="brand">Isaiah Bomfim</div>
+    <div class="navlinks">
+      <a href="#projects">Projects</a>
+      <a href="#resume">Resume</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <span class="eyebrow">Data Analytics &amp; AI · Bentley University</span>
+    <h1 class="name">Isaiah Bomfim</h1>
+    <p class="role">Sophomore data analytics major who likes turning raw data into decisions worth arguing about, using Python, SQL, and Power BI.</p>
+    <p class="bio">I like projects that start with a real question instead of a clean dataset. My latest one pulls live NBA statistics through a July 2026 trade, builds a database from scratch, and argues both sides of whether the deal actually made sense. I also work as a warehouse and sales associate at Best Buy, which is a big part of why I'm drawn to retail and operations analytics specifically, alongside financial operations and research.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="#projects">View projects</a>
+      <a class="btn ghost" href="resume.pdf" target="_blank" rel="noopener">Download résumé ↓</a>
+    </div>
+    <div class="stat-strip mono">
+      <div class="stat"><div class="n">4</div><div class="l">NBA seasons pulled live via API</div></div>
+      <div class="stat"><div class="n">8</div><div class="l">tables modeled in SQLite</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">page Power BI report, built solo</div></div>
+    </div>
+  </header>
+
+  <section id="projects">
+    <div class="section-head">
+      <h2 class="section-title">Projects</h2>
+    </div>
+    <div class="projects">
+
+      <div class="card live">
+        <div class="card-top">
+          <h3>NBA Trade Impact Analysis</h3>
+          <span class="status live">Live</span>
+        </div>
+        <p class="desc">An end-to-end pipeline analyzing Boston's real July 2026 trade of Jaylen Brown to Philadelphia for Paul George and four picks. I built it to test whether the trade actually holds up, not just react to it.</p>
+        <p class="tags">Python, nba_api, SQLite, SQL, Power BI, DAX</p>
+        <ul class="findings">
+          <li>Boston's paint-attempt rate ranks bottom-5 across every season pulled, verified against the data instead of assumed</li>
+          <li>George's on/off net rating is positive in every season on record; Brown's trends negative over the same stretch</li>
+          <li>A 3-page Power BI report models a projected shift in shot mix and argues both sides of the trade</li>
+        </ul>
+        <div class="card-links">
+          <a href="https://github.com/IsaiahBomfim/celtics-trade" target="_blank" rel="noopener">View on GitHub →</a>
+        </div>
+      </div>
+
+      <div class="card placeholder">
+        <div class="card-top">
+          <h3>Project two</h3>
+          <span class="status soon">In progress</span>
+        </div>
+        <p class="desc">Next build is in the pipeline, check back soon.</p>
+      </div>
+
+      <div class="card placeholder">
+        <div class="card-top">
+          <h3>Project three</h3>
+          <span class="status soon">Planned</span>
+        </div>
+        <p class="desc">Another project is on the way.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="resume">
+    <div class="section-head">
+      <h2 class="section-title">Resume</h2>
+    </div>
+
+    <div class="resume-grid">
+      <div>
+        <div class="resume-block">
+          <h4>Education</h4>
+          <div class="resume-role">Bentley University</div>
+          <div class="resume-meta">Data Analytics &amp; Business Administration, GPA 4.0, expected 2029</div>
+        </div>
+
+        <div class="resume-block">
+          <h4>Experience</h4>
+          <div class="resume-role">Best Buy, Admin / Sales and Warehouse Associate</div>
+          <div class="resume-meta">August 2025 – Present</div>
+          <ul>
+            <li>Review Power BI dashboards tracking store-wide sales and warehouse performance, flagging trends like shrinkage and closing rate for management</li>
+            <li>Handle daily cash management end to end, counting and verifying $3,000-$15,000 in register totals each morning and preparing deposit documentation</li>
+          </ul>
+          <div class="resume-role" style="margin-top:12px;">Bentley A.I. Society, Member</div>
+          <div class="resume-meta">August 2026 – Present</div>
+          <ul>
+            <li>Explore emerging AI tools and applications through society meetings, using platforms like Claude, Microsoft Copilot, and Perplexity for research and problem-solving</li>
+          </ul>
+        </div>
+
+        <div class="resume-block">
+          <h4>Project</h4>
+          <div class="resume-role">NBA Trade Impact Analysis</div>
+          <div class="resume-meta">Python, SQL, Power BI, DAX</div>
+          <ul>
+            <li>Built a Python pipeline pulling 4 seasons of NBA stats into a normalized SQLite database (8 tables, 3 views)</li>
+            <li>Designed a 3-page Power BI dashboard with DAX to compare players, verify a league-ranking claim, and project shot-mix changes under a roster swap</li>
+            <li>Debugged a Power BI data-model bug by isolating each measure to find the real root cause</li>
+          </ul>
+        </div>
+
+        <div class="resume-block">
+          <h4>Leadership</h4>
+          <div class="resume-role">Black Student Union, President</div>
+          <div class="resume-meta">Watertown High School, September 2024 – June 2025</div>
+          <ul>
+            <li>Led 25 members as President, managing budgets, events, and communication with school administration to grow community engagement</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="skills-box">
+        <h4>Skills</h4>
+        <p class="skill-tags">Python, SQL, Java, HTML, Power BI, DAX</p>
+        <h4 style="margin-top:18px;">Certifications</h4>
+        <p class="skill-tags">A.I. Essentials Specialization (Google), Bloomberg Market Concepts (Bloomberg)</p>
+        <h4 style="margin-top:18px;">Languages</h4>
+        <p class="skill-tags">English, Spanish, Portuguese</p>
+        <a class="btn primary dl-resume" href="resume.pdf" target="_blank" rel="noopener" style="margin-top:6px;">Download full résumé (PDF)</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="section-head">
+      <h2 class="section-title">Contact</h2>
+    </div>
+    <div class="contact-row">
+      <a class="contact-card" href="mailto:isaiahbomf@gmail.com">
+        <span class="k mono">Email</span>
+        <span class="v">isaiahbomf@gmail.com</span>
+      </a>
+      <a class="contact-card" href="https://github.com/IsaiahBomfim" target="_blank" rel="noopener">
+        <span class="k mono">GitHub</span>
+        <span class="v">github.com/IsaiahBomfim</span>
+      </a>
+      <a class="contact-card" href="https://www.linkedin.com/in/isaiah-bomfim-a29a15286" target="_blank" rel="noopener">
+        <span class="k mono">LinkedIn</span>
+        <span class="v">linkedin.com/in/isaiah-bomfim</span>
+      </a>
+    </div>
+  </section>
+
+  <footer>Built by Isaiah Bomfim · updated as new projects ship</footer>
+
+</div>
+
+<script>
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 8);
+  }, { passive:true });
+</script>
+
+</body>
+</html>
