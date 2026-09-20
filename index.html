@@ -322,6 +322,24 @@
 
   footer{ padding-block:28px 40px; text-align:center; color:var(--ink-faint); font-size:12.5px; }
 
+  /* ---------- theme toggle ---------- */
+  .theme-toggle{
+    position:fixed; right:20px; bottom:calc(20px + env(safe-area-inset-bottom,0px));
+    width:42px; height:42px; border-radius:50%;
+    background:var(--paper-raised); border:1px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; box-shadow:var(--shadow); z-index:30; color:var(--ink); padding:0;
+  }
+  .theme-toggle:hover{ border-color:var(--accent); color:var(--accent); }
+  .theme-toggle svg{ position:absolute; width:19px; height:19px; transition:opacity .25s ease, transform .35s ease; }
+  .theme-toggle .icon-sun{ opacity:1; transform:rotate(0deg) scale(1); }
+  .theme-toggle .icon-moon{ opacity:0; transform:rotate(-55deg) scale(.6); }
+  .theme-toggle.is-dark .icon-sun{ opacity:0; transform:rotate(55deg) scale(.6); }
+  .theme-toggle.is-dark .icon-moon{ opacity:1; transform:rotate(0deg) scale(1); }
+  @media (prefers-reduced-motion: reduce){
+    .theme-toggle svg{ transition:none; }
+  }
+
   @media (max-width:640px){
     .resume-grid{ grid-template-columns:1fr; }
     .contact-layout{ grid-template-columns:1fr; }
@@ -574,6 +592,11 @@
 
 </div>
 
+<button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/></svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
+</button>
+
 <script>
   // split the nav name into per-letter spans with a staggered delay, so a hover ripples across it
   const brandLetters = document.getElementById('brandLetters');
@@ -681,6 +704,42 @@
       form: this
     });
   });
+
+  // ---------- theme toggle (light / dark, remembers the visitor's choice) ----------
+  (function(){
+    const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+
+    function getStored(){ try{ return localStorage.getItem('theme'); }catch(e){ return null; } }
+    function setStored(v){ try{ localStorage.setItem('theme', v); }catch(e){} }
+    function systemPrefersDark(){ return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }
+    function effectiveTheme(){
+      const stored = getStored();
+      return (stored === 'light' || stored === 'dark') ? stored : (systemPrefersDark() ? 'dark' : 'light');
+    }
+    function updateIcon(){
+      const dark = effectiveTheme() === 'dark';
+      toggle.classList.toggle('is-dark', dark);
+      toggle.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+
+    const stored = getStored();
+    if(stored === 'light' || stored === 'dark') root.setAttribute('data-theme', stored);
+    updateIcon();
+
+    toggle.addEventListener('click', () => {
+      const next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      setStored(next);
+      updateIcon();
+    });
+
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if(!getStored()) updateIcon();
+      });
+    }
+  })();
 </script>
 
 </body>
