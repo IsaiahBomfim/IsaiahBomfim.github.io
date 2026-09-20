@@ -50,7 +50,6 @@
     color-scheme: dark;
   }
 
-  @font-face{ font-family:'sys'; src:local(sans-serif); }
   *{ box-sizing:border-box; }
   html,body{ background:var(--paper); }
   body{
@@ -75,20 +74,37 @@
     padding-block:16px;
     background:color-mix(in srgb, var(--paper) 88%, transparent);
     backdrop-filter:blur(6px);
-    z-index:10;
+    z-index:20;
     border-bottom:1px solid transparent;
   }
   nav.scrolled{ border-bottom-color:var(--line); }
-  .brand{ font-family:"Fraunces",serif; font-weight:600; font-size:17px; letter-spacing:.2px; }
-  .navlinks{ display:flex; gap:22px; font-size:13.5px; }
-  .navlinks a{ text-decoration:none; color:var(--ink-muted); }
-  .navlinks a:hover{ color:var(--accent); }
+  .brand{ font-family:"Fraunces",serif; font-weight:600; font-size:17px; letter-spacing:.2px; text-decoration:none; }
 
-  /* ---------- hero ---------- */
-  header.hero{ padding-block:56px 40px; }
-  .eyebrow{
-    font-size:13px; color:var(--ink-muted); margin-bottom:10px; display:block;
+  .menu{ position:relative; }
+  .menu-btn{
+    display:flex; align-items:center; gap:7px;
+    background:transparent; border:1px solid var(--line-strong); border-radius:3px;
+    padding:8px 13px; font-size:13.5px; font-family:inherit; color:var(--ink);
+    cursor:pointer;
   }
+  .menu-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .menu-btn svg{ width:10px; height:10px; flex:none; transition:transform .15s ease; }
+  .menu-btn[aria-expanded="true"] svg{ transform:rotate(180deg); }
+  .menu-panel{
+    position:absolute; top:calc(100% + 8px); right:0; min-width:196px;
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:5px;
+    box-shadow:var(--shadow); padding:6px; display:flex; flex-direction:column; gap:1px;
+  }
+  .menu-panel a{
+    display:block; padding:9px 12px; border-radius:3px; text-decoration:none;
+    font-size:13.5px; color:var(--ink-muted);
+  }
+  .menu-panel a:hover{ background:color-mix(in srgb, var(--accent) 10%, transparent); color:var(--accent); }
+  .menu-panel a[aria-current="page"]{ color:var(--accent); font-weight:600; }
+
+  /* ---------- hero (home view) ---------- */
+  .hero{ padding-block:56px 60px; }
+  .eyebrow{ font-size:13px; color:var(--ink-muted); margin-bottom:10px; display:block; }
   h1.name{ font-size:clamp(36px,7vw,58px); line-height:1.02; }
   .role{ margin-top:10px; font-size:17px; color:var(--ink-muted); max-width:60ch; }
   .bio{ margin-top:18px; font-size:16px; line-height:1.65; color:var(--ink); max-width:62ch; }
@@ -97,27 +113,21 @@
   .btn{
     font-size:14px; padding:10px 18px; border-radius:3px; text-decoration:none;
     font-weight:600; letter-spacing:.2px; display:inline-flex; align-items:center; gap:8px;
-    border:1px solid var(--line-strong);
+    border:1px solid var(--line-strong); background:transparent; color:var(--ink);
+    font-family:inherit; cursor:pointer;
   }
   .btn.primary{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
   .btn.primary:hover{ opacity:.9; }
-  .btn.ghost{ color:var(--ink); }
   .btn.ghost:hover{ border-color:var(--accent); color:var(--accent); }
 
-  .stat-strip{
-    margin-top:40px; display:grid; grid-template-columns:repeat(3,1fr); gap:0;
-    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  /* ---------- section views ---------- */
+  section[data-view]{ padding-block:8px 60px; min-height:40vh; }
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+    padding-bottom:16px; margin-bottom:30px; border-bottom:1px solid var(--line); flex-wrap:wrap;
   }
-  .stat{ padding:16px 6px; border-left:1px solid var(--line); }
-  .stat:first-child{ border-left:none; padding-left:0; }
-  .stat .n{ font-size:26px; font-weight:600; }
-  .stat .l{ font-size:12px; color:var(--ink-muted); margin-top:4px; }
-
-  /* ---------- sections ---------- */
-  section{ padding-block:44px; border-top:1px solid var(--line); }
-  .section-head{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:26px; flex-wrap:wrap; }
-  .section-num{ font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-faint); }
   h2.section-title{ font-size:26px; }
+  .section-sub{ font-size:13.5px; color:var(--ink-muted); }
 
   /* ---------- projects ---------- */
   .projects{ display:grid; grid-template-columns:1fr; gap:18px; }
@@ -166,25 +176,46 @@
   .skill-tags{ font-size:13.5px; color:var(--ink); line-height:1.7; margin-bottom:20px; }
   .dl-resume{ width:100%; justify-content:center; }
 
+  /* ---------- certifications ---------- */
+  .certs{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
+  .cert-card{
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:4px;
+    padding:20px; box-shadow:var(--shadow);
+  }
+  .cert-card .issuer{
+    font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.8px; text-transform:uppercase;
+    color:var(--ink-faint); margin-bottom:8px; display:block;
+  }
+  .cert-card h3{ font-size:17px; margin-bottom:8px; }
+  .cert-card p{ font-size:13.5px; line-height:1.6; color:var(--ink-muted); margin:0; }
+
   /* ---------- contact ---------- */
-  .contact-row{ display:flex; flex-wrap:wrap; gap:14px; }
+  .contact-layout{ display:grid; grid-template-columns:1.1fr .9fr; gap:32px; align-items:start; }
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:12.5px; font-weight:600; color:var(--ink-muted); margin-bottom:6px; }
+  .field input, .field textarea{
+    width:100%; font-family:inherit; font-size:14.5px; color:var(--ink);
+    background:var(--paper-raised); border:1px solid var(--line-strong); border-radius:4px;
+    padding:10px 12px; resize:vertical;
+  }
+  .field input:focus, .field textarea:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .contact-hint{ font-size:12px; color:var(--ink-faint); margin-top:10px; }
+
+  .contact-row{ display:flex; flex-direction:column; gap:14px; }
   .contact-card{
-    flex:1 1 220px; background:var(--paper-raised); border:1px solid var(--line); border-radius:4px;
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:4px;
     padding:18px 20px; text-decoration:none; display:flex; flex-direction:column; gap:4px;
   }
   .contact-card:hover{ border-color:var(--accent); }
   .contact-card .k{ font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:1px; text-transform:uppercase; color:var(--ink-faint); }
   .contact-card .v{ font-size:14.5px; font-weight:600; color:var(--ink); word-break:break-word; }
-  .contact-card.pending .v{ color:var(--ink-faint); font-weight:500; font-style:italic; }
 
   footer{ padding-block:28px 40px; text-align:center; color:var(--ink-faint); font-size:12.5px; }
 
   @media (max-width:640px){
-    .stat-strip{ grid-template-columns:1fr; }
-    .stat{ border-left:none; border-top:1px solid var(--line); padding-left:0; }
-    .stat:first-child{ border-top:none; }
     .resume-grid{ grid-template-columns:1fr; }
-    .navlinks{ gap:14px; }
+    .contact-layout{ grid-template-columns:1fr; }
+    .menu-panel{ min-width:180px; }
   }
 </style>
 
@@ -196,15 +227,23 @@
 <div class="wrap">
 
   <nav id="nav">
-    <div class="brand">Isaiah Bomfim</div>
-    <div class="navlinks">
-      <a href="#projects">Projects</a>
-      <a href="#resume">Resume</a>
-      <a href="#contact">Contact</a>
+    <a class="brand" href="#home">Isaiah Bomfim</a>
+    <div class="menu">
+      <button id="menuBtn" class="menu-btn" type="button" aria-haspopup="true" aria-expanded="false">
+        <span id="menuLabel">Home</span>
+        <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div id="menuPanel" class="menu-panel" role="menu" hidden>
+        <a href="#home" data-view="home" role="menuitem">Home</a>
+        <a href="#projects" data-view="projects" role="menuitem">Projects</a>
+        <a href="#resume" data-view="resume" role="menuitem">Resume &amp; Skills</a>
+        <a href="#certifications" data-view="certifications" role="menuitem">Certifications</a>
+        <a href="#contact" data-view="contact" role="menuitem">Contact</a>
+      </div>
     </div>
   </nav>
 
-  <header class="hero">
+  <section data-view="home" class="hero">
     <span class="eyebrow">Data Analytics &amp; AI · Bentley University</span>
     <h1 class="name">Isaiah Bomfim</h1>
     <p class="role">Sophomore data analytics major who likes turning raw data into decisions worth arguing about, using Python, SQL, and Power BI.</p>
@@ -213,14 +252,9 @@
       <a class="btn primary" href="#projects">View projects</a>
       <a class="btn ghost" href="resume.pdf" target="_blank" rel="noopener">Download résumé ↓</a>
     </div>
-    <div class="stat-strip mono">
-      <div class="stat"><div class="n">4</div><div class="l">NBA seasons pulled live via API</div></div>
-      <div class="stat"><div class="n">8</div><div class="l">tables modeled in SQLite</div></div>
-      <div class="stat"><div class="n">3</div><div class="l">page Power BI report, built solo</div></div>
-    </div>
-  </header>
+  </section>
 
-  <section id="projects">
+  <section data-view="projects" id="projects" hidden>
     <div class="section-head">
       <h2 class="section-title">Projects</h2>
     </div>
@@ -262,9 +296,9 @@
     </div>
   </section>
 
-  <section id="resume">
+  <section data-view="resume" id="resume" hidden>
     <div class="section-head">
-      <h2 class="section-title">Resume</h2>
+      <h2 class="section-title">Resume &amp; Skills</h2>
     </div>
 
     <div class="resume-grid">
@@ -314,8 +348,6 @@
       <div class="skills-box">
         <h4>Skills</h4>
         <p class="skill-tags">Python, SQL, Java, HTML, Power BI, DAX</p>
-        <h4 style="margin-top:18px;">Certifications</h4>
-        <p class="skill-tags">A.I. Essentials Specialization (Google), Bloomberg Market Concepts (Bloomberg)</p>
         <h4 style="margin-top:18px;">Languages</h4>
         <p class="skill-tags">English, Spanish, Portuguese</p>
         <a class="btn primary dl-resume" href="resume.pdf" target="_blank" rel="noopener" style="margin-top:6px;">Download full résumé (PDF)</a>
@@ -323,23 +355,60 @@
     </div>
   </section>
 
-  <section id="contact">
+  <section data-view="certifications" id="certifications" hidden>
+    <div class="section-head">
+      <h2 class="section-title">Certifications</h2>
+    </div>
+    <div class="certs">
+      <div class="cert-card">
+        <span class="issuer mono">Google</span>
+        <h3>A.I. Essentials Specialization</h3>
+        <p>Foundations of generative AI, prompting, and using AI tools responsibly across everyday work.</p>
+      </div>
+      <div class="cert-card">
+        <span class="issuer mono">Bloomberg</span>
+        <h3>Bloomberg Market Concepts</h3>
+        <p>A four-module primer on economics, currencies, fixed income, and equities, built around the Bloomberg Terminal.</p>
+      </div>
+    </div>
+  </section>
+
+  <section data-view="contact" id="contact" hidden>
     <div class="section-head">
       <h2 class="section-title">Contact</h2>
     </div>
-    <div class="contact-row">
-      <a class="contact-card" href="mailto:isaiahbomf@gmail.com">
-        <span class="k mono">Email</span>
-        <span class="v">isaiahbomf@gmail.com</span>
-      </a>
-      <a class="contact-card" href="https://github.com/IsaiahBomfim" target="_blank" rel="noopener">
-        <span class="k mono">GitHub</span>
-        <span class="v">github.com/IsaiahBomfim</span>
-      </a>
-      <a class="contact-card" href="https://www.linkedin.com/in/isaiah-bomfim-a29a15286" target="_blank" rel="noopener">
-        <span class="k mono">LinkedIn</span>
-        <span class="v">linkedin.com/in/isaiah-bomfim</span>
-      </a>
+    <div class="contact-layout">
+      <form id="contactForm">
+        <div class="field">
+          <label for="cf-name">Name</label>
+          <input id="cf-name" name="name" type="text" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="cf-email">Your email</label>
+          <input id="cf-email" name="email" type="email" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="cf-message">Message</label>
+          <textarea id="cf-message" name="message" rows="6" required></textarea>
+        </div>
+        <button class="btn primary" type="submit">Send message</button>
+        <p class="contact-hint">This opens your email app with the message addressed to me, ready to send.</p>
+      </form>
+
+      <div class="contact-row">
+        <a class="contact-card" href="mailto:isaiahbomf@gmail.com">
+          <span class="k mono">Email</span>
+          <span class="v">isaiahbomf@gmail.com</span>
+        </a>
+        <a class="contact-card" href="https://github.com/IsaiahBomfim" target="_blank" rel="noopener">
+          <span class="k mono">GitHub</span>
+          <span class="v">github.com/IsaiahBomfim</span>
+        </a>
+        <a class="contact-card" href="https://www.linkedin.com/in/isaiah-bomfim-a29a15286" target="_blank" rel="noopener">
+          <span class="k mono">LinkedIn</span>
+          <span class="v">linkedin.com/in/isaiah-bomfim</span>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -352,6 +421,52 @@
   addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 8);
   }, { passive:true });
+
+  const viewNames = ['home','projects','resume','certifications','contact'];
+  const views = {};
+  viewNames.forEach(n => { views[n] = document.querySelector(`section[data-view="${n}"]`); });
+  const menuBtn = document.getElementById('menuBtn');
+  const menuPanel = document.getElementById('menuPanel');
+  const menuLabel = document.getElementById('menuLabel');
+  const menuLinks = document.querySelectorAll('.menu-panel a');
+  const labels = { home:'Home', projects:'Projects', resume:'Resume & Skills', certifications:'Certifications', contact:'Contact' };
+
+  function openMenu(){ menuPanel.hidden = false; menuBtn.setAttribute('aria-expanded','true'); }
+  function closeMenu(){ menuPanel.hidden = true; menuBtn.setAttribute('aria-expanded','false'); }
+
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menuPanel.hidden ? openMenu() : closeMenu();
+  });
+  document.addEventListener('click', (e) => {
+    if(!menuPanel.hidden && !menuPanel.contains(e.target) && e.target !== menuBtn) closeMenu();
+  });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeMenu(); });
+  menuPanel.addEventListener('click', (e) => { if(e.target.tagName === 'A') closeMenu(); });
+
+  function render(){
+    let name = (location.hash || '#home').slice(1);
+    if(!views[name]) name = 'home';
+    viewNames.forEach(n => { views[n].hidden = n !== name; });
+    menuLinks.forEach(a => {
+      if(a.dataset.view === name){ a.setAttribute('aria-current','page'); }
+      else { a.removeAttribute('aria-current'); }
+    });
+    menuLabel.textContent = labels[name];
+    window.scrollTo(0,0);
+  }
+  addEventListener('hashchange', render);
+  render();
+
+  document.getElementById('contactForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('cf-name').value.trim();
+    const email = document.getElementById('cf-email').value.trim();
+    const message = document.getElementById('cf-message').value.trim();
+    const subject = encodeURIComponent(`Portfolio contact from ${name || 'a visitor'}`);
+    const body = encodeURIComponent(`${message}\n\n—\n${name}\n${email}`);
+    window.location.href = `mailto:isaiahbomf@gmail.com?subject=${subject}&body=${body}`;
+  });
 </script>
 
 </body>
