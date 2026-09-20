@@ -78,7 +78,15 @@
     border-bottom:1px solid transparent;
   }
   nav.scrolled{ border-bottom-color:var(--line); }
-  .brand{ font-family:"Fraunces",serif; font-weight:600; font-size:17px; letter-spacing:.2px; text-decoration:none; }
+  .brand{ font-family:"Fraunces",serif; font-weight:600; font-size:17px; letter-spacing:.2px; text-decoration:none; display:inline-block; }
+  .brand-letters span{ display:inline-block; will-change:transform; }
+  .brand:hover .brand-letters span{ animation:brand-ripple .7s ease-in-out; }
+  @keyframes brand-ripple{
+    0%{ transform:translateY(0); color:inherit; }
+    35%{ transform:translateY(-5px); color:var(--accent); }
+    65%{ transform:translateY(2px); }
+    100%{ transform:translateY(0); color:inherit; }
+  }
 
   .menu{ position:relative; }
   .menu-btn{
@@ -112,16 +120,62 @@
   .menu-panel a[aria-current="page"]{ color:var(--accent); font-weight:600; }
 
   /* ---------- hero (home view) ---------- */
-  .hero{ position:relative; padding-block:56px 60px; overflow:hidden; }
+  .hero{ position:relative; padding-block:56px 60px; }
   .hero-content{ position:relative; z-index:1; }
-  .hero-motif{ position:absolute; top:-30px; right:-60px; width:400px; height:400px; pointer-events:none; z-index:0; }
-  .eyebrow{ font-size:13px; color:var(--ink-muted); margin-bottom:10px; display:block; }
+  .hero-motif{ position:absolute; top:-10px; right:-30px; width:380px; height:380px; max-width:52vw; pointer-events:none; z-index:0; }
+  .hero-motif .grid-line{ stroke:var(--line); stroke-width:1; }
+  .hero-motif .spark-path{
+    fill:none; stroke:var(--accent); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round;
+    opacity:.55; stroke-dasharray:575; stroke-dashoffset:575;
+    animation:spark-draw 2.4s cubic-bezier(.3,.7,.4,1) .3s forwards;
+  }
+  .hero-motif .spark-node{ transform-box:fill-box; transform-origin:center; }
+  .hero-motif .spark-node.end{ animation:spark-pulse 2.6s ease-out 2.7s infinite; }
+  .hero-motif .spark-node.mid{ opacity:.35; }
+  .hero-motif .spark-travel{
+    offset-path:path("M10 290 L70 250 L130 300 L190 170 L250 215 L310 110 L380 150");
+    offset-rotate:0deg;
+    opacity:0;
+    animation:spark-travel 4.5s linear 2.6s infinite;
+  }
+  @keyframes spark-draw{ to{ stroke-dashoffset:0; } }
+  @keyframes spark-pulse{
+    0%{ transform:scale(1); opacity:.6; }
+    50%{ transform:scale(2.1); opacity:0; }
+    100%{ transform:scale(1); opacity:0; }
+  }
+  @keyframes spark-travel{
+    0%{ offset-distance:0%; opacity:0; }
+    6%{ opacity:.85; }
+    94%{ opacity:.85; }
+    100%{ offset-distance:100%; opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-motif .spark-path{ animation:none; stroke-dashoffset:0; }
+    .hero-motif .spark-node.end{ animation:none; }
+    .hero-motif .spark-travel{ animation:none; opacity:0; }
+  }
+  .eyebrow{ font-size:13px; color:var(--ink-muted); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .eyebrow-logo{ display:block; flex:none; }
   h1.name{ font-size:clamp(36px,7vw,58px); line-height:1.02; }
   .role{ margin-top:10px; font-size:17px; color:var(--ink-muted); max-width:60ch; }
   .bio{ margin-top:18px; font-size:16px; line-height:1.65; color:var(--ink); max-width:62ch; }
 
-  .currently{ display:flex; align-items:center; gap:9px; margin-top:18px; font-size:13.5px; color:var(--ink-muted); max-width:62ch; }
-  .currently .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); flex:none; box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+  .currently{ display:flex; align-items:flex-start; gap:9px; margin-top:18px; font-size:13.5px; color:var(--ink-muted); max-width:62ch; }
+  .currently .dot{ position:relative; width:7px; height:7px; margin-top:6px; border-radius:50%; background:var(--accent); flex:none; }
+  .currently .dot::after{
+    content:""; position:absolute; inset:-5px; border-radius:50%;
+    border:1.5px solid var(--accent);
+    animation:dot-pulse 2.2s ease-out infinite;
+  }
+  @keyframes dot-pulse{
+    0%{ transform:scale(.5); opacity:.8; }
+    75%{ transform:scale(2.2); opacity:0; }
+    100%{ transform:scale(2.2); opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .currently .dot::after{ animation:none; opacity:0; }
+  }
 
   .cta-row{ display:flex; gap:12px; flex-wrap:wrap; margin-top:26px; }
   .btn{
@@ -266,7 +320,7 @@
 <div class="wrap">
 
   <nav id="nav">
-    <a class="brand" href="#home">Isaiah Bomfim</a>
+    <a class="brand" href="#home"><span class="brand-letters" id="brandLetters">Isaiah Bomfim</span></a>
     <div class="menu">
       <button id="menuBtn" class="menu-btn" type="button" aria-haspopup="true" aria-expanded="false">
         <span id="menuLabel">Home</span>
@@ -283,20 +337,21 @@
 
   <section data-view="home" class="hero">
     <svg class="hero-motif" viewBox="0 0 400 400" aria-hidden="true">
-      <g stroke="var(--line)" stroke-width="1">
+      <g class="grid-line">
         <line x1="0" y1="60" x2="400" y2="60"/>
         <line x1="0" y1="130" x2="400" y2="130"/>
         <line x1="0" y1="200" x2="400" y2="200"/>
         <line x1="0" y1="270" x2="400" y2="270"/>
         <line x1="0" y1="340" x2="400" y2="340"/>
       </g>
-      <path d="M10 290 L70 250 L130 300 L190 170 L250 215 L310 110 L380 150" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
-      <circle cx="380" cy="150" r="4.5" fill="var(--accent)" opacity="0.6"/>
-      <circle cx="190" cy="170" r="4.5" fill="var(--accent)" opacity="0.35"/>
+      <path class="spark-path" d="M10 290 L70 250 L130 300 L190 170 L250 215 L310 110 L380 150"/>
+      <circle class="spark-node end" cx="380" cy="150" r="4.5" fill="var(--accent)"/>
+      <circle class="spark-node mid" cx="190" cy="170" r="4.5" fill="var(--accent)"/>
+      <circle class="spark-travel" r="4" fill="var(--accent)"/>
     </svg>
 
     <div class="hero-content">
-      <span class="eyebrow">Data Analytics &amp; AI · Bentley University</span>
+      <span class="eyebrow"><img class="eyebrow-logo" src="bentley-icon.png" alt="" width="21" height="30">Data Analytics &amp; AI · Bentley University</span>
       <h1 class="name">Isaiah Bomfim</h1>
       <p class="role">Sophomore data analytics major who likes turning raw data into decisions worth arguing about, using Python, SQL, and Power BI.</p>
       <p class="bio">I like projects that start with a real question instead of a clean dataset. My latest one pulls live NBA statistics through a July 2026 trade, builds a database from scratch, and argues both sides of whether the deal actually made sense. I also work as a warehouse and sales associate at Best Buy, which is a big part of why I'm drawn to retail and operations analytics specifically, alongside financial operations and research.</p>
@@ -487,6 +542,12 @@
 </div>
 
 <script>
+  // split the nav name into per-letter spans with a staggered delay, so a hover ripples across it
+  const brandLetters = document.getElementById('brandLetters');
+  brandLetters.innerHTML = [...brandLetters.textContent].map((ch, i) =>
+    `<span style="animation-delay:${i * 28}ms">${ch === ' ' ? '&nbsp;' : ch}</span>`
+  ).join('');
+
   const nav = document.getElementById('nav');
   addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 8);
