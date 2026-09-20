@@ -3,6 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Isaiah Bomfim — Bentley University data analytics student. Python, SQL, and Power BI projects, resume, certifications, and contact.">
+<link rel="icon" type="image/png" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://isaiahbomfim.github.io/">
+<meta property="og:title" content="Isaiah Bomfim — Data Analytics & AI">
+<meta property="og:description" content="Bentley University sophomore turning raw data into decisions worth arguing about. Python, SQL, Power BI projects, resume, and certifications.">
+<meta property="og:image" content="https://isaiahbomfim.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Isaiah Bomfim — Data Analytics & AI">
+<meta name="twitter:description" content="Bentley University sophomore turning raw data into decisions worth arguing about.">
+<meta name="twitter:image" content="https://isaiahbomfim.github.io/og-image.png">
 <title>Isaiah Bomfim</title>
 <style>
   :root{
@@ -276,6 +290,11 @@
   }
   .cert-card h3{ font-size:17px; margin-bottom:8px; }
   .cert-card p{ font-size:13.5px; line-height:1.6; color:var(--ink-muted); margin:0; }
+  .cert-card.soon{ border-style:dashed; border-color:var(--line-strong); box-shadow:none; }
+  .cert-card.soon h3{ color:var(--ink-faint); }
+  .cert-card.soon p{ color:var(--ink-faint); }
+  .cert-card .issuer.inprogress{ color:var(--accent-2); }
+  .certs-sub{ font-size:12.5px; color:var(--ink-faint); margin:26px 0 12px; text-transform:uppercase; letter-spacing:.8px; font-family:"IBM Plex Mono",monospace; }
 
   /* ---------- contact ---------- */
   .contact-layout{ display:grid; grid-template-columns:1.1fr .9fr; gap:32px; align-items:start; }
@@ -493,6 +512,20 @@
           <span class="issuer mono">Bloomberg</span>
           <h3>Bloomberg Market Concepts</h3>
           <p>A four-module primer on economics, currencies, fixed income, and equities, built around the Bloomberg Terminal.</p>
+        </div>
+      </div>
+
+      <p class="certs-sub">In progress</p>
+      <div class="certs">
+        <div class="cert-card soon">
+          <span class="issuer mono inprogress">Bloomberg</span>
+          <h3>Bloomberg Spreadsheet Analysis</h3>
+          <p>Bloomberg Query Language (BQL) in Excel — pulling and modeling live market data straight into a spreadsheet.</p>
+        </div>
+        <div class="cert-card soon">
+          <span class="issuer mono inprogress">Microsoft</span>
+          <h3>AI Business Professional (AB-730)</h3>
+          <p>Applying Copilot and M365 AI tools to real business workflows.</p>
         </div>
       </div>
     </div>
