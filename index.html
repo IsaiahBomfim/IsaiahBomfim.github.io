@@ -94,6 +94,15 @@
     position:absolute; top:calc(100% + 8px); right:0; min-width:196px;
     background:var(--paper-raised); border:1px solid var(--line); border-radius:5px;
     box-shadow:var(--shadow); padding:6px; display:flex; flex-direction:column; gap:1px;
+    opacity:0; visibility:hidden; transform:translateY(-4px);
+    transition:opacity .15s ease, transform .15s ease, visibility .15s;
+    pointer-events:none;
+  }
+  /* invisible bridge so the pointer doesn't lose :hover crossing the gap */
+  .menu-panel::before{ content:""; position:absolute; top:-8px; left:0; right:0; height:8px; }
+  .menu-panel.open{ opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto; }
+  @media (hover:hover){
+    .menu:hover .menu-panel{ opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto; }
   }
   .menu-panel a{
     display:block; padding:9px 12px; border-radius:3px; text-decoration:none;
@@ -103,11 +112,16 @@
   .menu-panel a[aria-current="page"]{ color:var(--accent); font-weight:600; }
 
   /* ---------- hero (home view) ---------- */
-  .hero{ padding-block:56px 60px; }
+  .hero{ position:relative; padding-block:56px 60px; overflow:hidden; }
+  .hero-content{ position:relative; z-index:1; }
+  .hero-motif{ position:absolute; top:-30px; right:-60px; width:400px; height:400px; pointer-events:none; z-index:0; }
   .eyebrow{ font-size:13px; color:var(--ink-muted); margin-bottom:10px; display:block; }
   h1.name{ font-size:clamp(36px,7vw,58px); line-height:1.02; }
   .role{ margin-top:10px; font-size:17px; color:var(--ink-muted); max-width:60ch; }
   .bio{ margin-top:18px; font-size:16px; line-height:1.65; color:var(--ink); max-width:62ch; }
+
+  .currently{ display:flex; align-items:center; gap:9px; margin-top:18px; font-size:13.5px; color:var(--ink-muted); max-width:62ch; }
+  .currently .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); flex:none; box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
 
   .cta-row{ display:flex; gap:12px; flex-wrap:wrap; margin-top:26px; }
   .btn{
@@ -119,6 +133,25 @@
   .btn.primary{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
   .btn.primary:hover{ opacity:.9; }
   .btn.ghost:hover{ border-color:var(--accent); color:var(--accent); }
+  .btn:disabled{ opacity:.6; cursor:default; }
+
+  /* ---------- suggest-a-project (home view) ---------- */
+  .suggest{
+    position:relative; z-index:1;
+    margin-top:46px; display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start;
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:6px; padding:26px 28px;
+    box-shadow:var(--shadow);
+  }
+  .suggest-text h3{ font-size:18px; margin-bottom:8px; }
+  .suggest-text p{ font-size:13.5px; line-height:1.6; color:var(--ink-muted); margin:0; max-width:38ch; }
+  .suggest-form{ display:flex; flex-direction:column; gap:10px; }
+  .suggest-form textarea, .suggest-form input{
+    width:100%; font-family:inherit; font-size:14px; color:var(--ink);
+    background:var(--paper); border:1px solid var(--line-strong); border-radius:4px;
+    padding:9px 11px; resize:vertical;
+  }
+  .suggest-form textarea:focus, .suggest-form input:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .suggest-form .btn{ align-self:flex-start; }
 
   /* ---------- section views ---------- */
   section[data-view]{ padding-block:8px 60px; min-height:40vh; }
@@ -176,7 +209,8 @@
   .skill-tags{ font-size:13.5px; color:var(--ink); line-height:1.7; margin-bottom:20px; }
   .dl-resume{ width:100%; justify-content:center; }
 
-  /* ---------- certifications ---------- */
+  /* ---------- certifications (now inside resume view) ---------- */
+  .certs-block{ margin-top:36px; }
   .certs{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
   .cert-card{
     background:var(--paper-raised); border:1px solid var(--line); border-radius:4px;
@@ -199,7 +233,10 @@
     padding:10px 12px; resize:vertical;
   }
   .field input:focus, .field textarea:focus{ outline:2px solid var(--accent); outline-offset:1px; }
-  .contact-hint{ font-size:12px; color:var(--ink-faint); margin-top:10px; }
+
+  .form-status{ font-size:12px; color:var(--ink-faint); margin-top:10px; }
+  .form-status.ok{ color:var(--accent); }
+  .form-status.err{ color:var(--accent-2); }
 
   .contact-row{ display:flex; flex-direction:column; gap:14px; }
   .contact-card{
@@ -215,7 +252,9 @@
   @media (max-width:640px){
     .resume-grid{ grid-template-columns:1fr; }
     .contact-layout{ grid-template-columns:1fr; }
+    .suggest{ grid-template-columns:1fr; }
     .menu-panel{ min-width:180px; }
+    .hero-motif{ display:none; }
   }
 </style>
 
@@ -233,24 +272,55 @@
         <span id="menuLabel">Home</span>
         <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
-      <div id="menuPanel" class="menu-panel" role="menu" hidden>
+      <div id="menuPanel" class="menu-panel" role="menu">
         <a href="#home" data-view="home" role="menuitem">Home</a>
         <a href="#projects" data-view="projects" role="menuitem">Projects</a>
         <a href="#resume" data-view="resume" role="menuitem">Resume &amp; Skills</a>
-        <a href="#certifications" data-view="certifications" role="menuitem">Certifications</a>
         <a href="#contact" data-view="contact" role="menuitem">Contact</a>
       </div>
     </div>
   </nav>
 
   <section data-view="home" class="hero">
-    <span class="eyebrow">Data Analytics &amp; AI · Bentley University</span>
-    <h1 class="name">Isaiah Bomfim</h1>
-    <p class="role">Sophomore data analytics major who likes turning raw data into decisions worth arguing about, using Python, SQL, and Power BI.</p>
-    <p class="bio">I like projects that start with a real question instead of a clean dataset. My latest one pulls live NBA statistics through a July 2026 trade, builds a database from scratch, and argues both sides of whether the deal actually made sense. I also work as a warehouse and sales associate at Best Buy, which is a big part of why I'm drawn to retail and operations analytics specifically, alongside financial operations and research.</p>
-    <div class="cta-row">
-      <a class="btn primary" href="#projects">View projects</a>
-      <a class="btn ghost" href="resume.pdf" target="_blank" rel="noopener">Download résumé ↓</a>
+    <svg class="hero-motif" viewBox="0 0 400 400" aria-hidden="true">
+      <g stroke="var(--line)" stroke-width="1">
+        <line x1="0" y1="60" x2="400" y2="60"/>
+        <line x1="0" y1="130" x2="400" y2="130"/>
+        <line x1="0" y1="200" x2="400" y2="200"/>
+        <line x1="0" y1="270" x2="400" y2="270"/>
+        <line x1="0" y1="340" x2="400" y2="340"/>
+      </g>
+      <path d="M10 290 L70 250 L130 300 L190 170 L250 215 L310 110 L380 150" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.55"/>
+      <circle cx="380" cy="150" r="4.5" fill="var(--accent)" opacity="0.6"/>
+      <circle cx="190" cy="170" r="4.5" fill="var(--accent)" opacity="0.35"/>
+    </svg>
+
+    <div class="hero-content">
+      <span class="eyebrow">Data Analytics &amp; AI · Bentley University</span>
+      <h1 class="name">Isaiah Bomfim</h1>
+      <p class="role">Sophomore data analytics major who likes turning raw data into decisions worth arguing about, using Python, SQL, and Power BI.</p>
+      <p class="bio">I like projects that start with a real question instead of a clean dataset. My latest one pulls live NBA statistics through a July 2026 trade, builds a database from scratch, and argues both sides of whether the deal actually made sense. I also work as a warehouse and sales associate at Best Buy, which is a big part of why I'm drawn to retail and operations analytics specifically, alongside financial operations and research.</p>
+
+      <p class="currently"><span class="dot" aria-hidden="true"></span>Currently: working at Best Buy, active in Bentley's A.I. Society, and open to Summer 2027 data &amp; AI internships.</p>
+
+      <div class="cta-row">
+        <a class="btn primary" href="#projects">View projects</a>
+        <a class="btn ghost" href="#resume">Resume &amp; skills →</a>
+        <a class="btn ghost" href="resume.pdf" target="_blank" rel="noopener">Download résumé ↓</a>
+      </div>
+    </div>
+
+    <div class="suggest">
+      <div class="suggest-text">
+        <h3>Have an idea for what I should dig into next?</h3>
+        <p>A dataset, a question, a decision you want tested against the numbers — tell me and it might become the next project.</p>
+      </div>
+      <form id="suggestForm" class="suggest-form">
+        <textarea id="sg-idea" name="idea" rows="3" placeholder="e.g. Was signing that free agent actually worth it..." required></textarea>
+        <input id="sg-from" name="from" type="text" placeholder="Your name or email (optional)">
+        <button class="btn primary" type="submit">Send idea</button>
+        <p class="form-status" id="suggestStatus">Goes straight to my inbox.</p>
+      </form>
     </div>
   </section>
 
@@ -353,22 +423,22 @@
         <a class="btn primary dl-resume" href="resume.pdf" target="_blank" rel="noopener" style="margin-top:6px;">Download full résumé (PDF)</a>
       </div>
     </div>
-  </section>
 
-  <section data-view="certifications" id="certifications" hidden>
-    <div class="section-head">
-      <h2 class="section-title">Certifications</h2>
-    </div>
-    <div class="certs">
-      <div class="cert-card">
-        <span class="issuer mono">Google</span>
-        <h3>A.I. Essentials Specialization</h3>
-        <p>Foundations of generative AI, prompting, and using AI tools responsibly across everyday work.</p>
+    <div class="certs-block">
+      <div class="section-head" style="border-bottom:none; padding-bottom:0; margin-bottom:16px;">
+        <h2 class="section-title" style="font-size:19px;">Certifications</h2>
       </div>
-      <div class="cert-card">
-        <span class="issuer mono">Bloomberg</span>
-        <h3>Bloomberg Market Concepts</h3>
-        <p>A four-module primer on economics, currencies, fixed income, and equities, built around the Bloomberg Terminal.</p>
+      <div class="certs">
+        <div class="cert-card">
+          <span class="issuer mono">Google</span>
+          <h3>A.I. Essentials Specialization</h3>
+          <p>Foundations of generative AI, prompting, and using AI tools responsibly across everyday work.</p>
+        </div>
+        <div class="cert-card">
+          <span class="issuer mono">Bloomberg</span>
+          <h3>Bloomberg Market Concepts</h3>
+          <p>A four-module primer on economics, currencies, fixed income, and equities, built around the Bloomberg Terminal.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -392,7 +462,7 @@
           <textarea id="cf-message" name="message" rows="6" required></textarea>
         </div>
         <button class="btn primary" type="submit">Send message</button>
-        <p class="contact-hint">This opens your email app with the message addressed to me, ready to send.</p>
+        <p class="form-status" id="contactStatus">Sends straight to my inbox — no email app required.</p>
       </form>
 
       <div class="contact-row">
@@ -422,24 +492,25 @@
     nav.classList.toggle('scrolled', window.scrollY > 8);
   }, { passive:true });
 
-  const viewNames = ['home','projects','resume','certifications','contact'];
+  const viewNames = ['home','projects','resume','contact'];
   const views = {};
   viewNames.forEach(n => { views[n] = document.querySelector(`section[data-view="${n}"]`); });
   const menuBtn = document.getElementById('menuBtn');
   const menuPanel = document.getElementById('menuPanel');
   const menuLabel = document.getElementById('menuLabel');
   const menuLinks = document.querySelectorAll('.menu-panel a');
-  const labels = { home:'Home', projects:'Projects', resume:'Resume & Skills', certifications:'Certifications', contact:'Contact' };
+  const labels = { home:'Home', projects:'Projects', resume:'Resume & Skills', contact:'Contact' };
 
-  function openMenu(){ menuPanel.hidden = false; menuBtn.setAttribute('aria-expanded','true'); }
-  function closeMenu(){ menuPanel.hidden = true; menuBtn.setAttribute('aria-expanded','false'); }
+  function openMenu(){ menuPanel.classList.add('open'); menuBtn.setAttribute('aria-expanded','true'); }
+  function closeMenu(){ menuPanel.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); }
 
+  // click still toggles (for touch devices, which have no hover); CSS handles hover-to-open on mouse devices
   menuBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    menuPanel.hidden ? openMenu() : closeMenu();
+    menuPanel.classList.contains('open') ? closeMenu() : openMenu();
   });
   document.addEventListener('click', (e) => {
-    if(!menuPanel.hidden && !menuPanel.contains(e.target) && e.target !== menuBtn) closeMenu();
+    if(menuPanel.classList.contains('open') && !menuPanel.contains(e.target) && e.target !== menuBtn) closeMenu();
   });
   document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeMenu(); });
   menuPanel.addEventListener('click', (e) => { if(e.target.tagName === 'A') closeMenu(); });
@@ -458,14 +529,63 @@
   addEventListener('hashchange', render);
   render();
 
+  // ---------- native form sending (FormSubmit, no email-app handoff) ----------
+  // Falls back to mailto only if the network request itself fails (e.g. this exact
+  // page is running inside an environment that blocks outbound requests).
+  async function sendForm({ subject, fields, statusEl, form }){
+    const btn = form.querySelector('button[type="submit"]');
+    const originalStatus = statusEl.textContent;
+    statusEl.classList.remove('ok','err');
+    statusEl.textContent = 'Sending…';
+    if(btn) btn.disabled = true;
+    try{
+      const res = await fetch('https://formsubmit.co/ajax/isaiahbomf@gmail.com', {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
+        body: JSON.stringify({ ...fields, _subject: subject, _captcha:'false', _template:'table' })
+      });
+      if(!res.ok) throw new Error('request failed');
+      statusEl.textContent = 'Sent — thanks, I’ll get back to you soon.';
+      statusEl.classList.add('ok');
+      form.reset();
+    }catch(err){
+      const body = Object.entries(fields).map(([k,v]) => `${k}: ${v}`).join('\n');
+      window.location.href = `mailto:isaiahbomf@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      statusEl.textContent = 'Couldn’t send directly — opening your email app instead.';
+      statusEl.classList.add('err');
+    }finally{
+      if(btn) btn.disabled = false;
+      setTimeout(() => {
+        if(!statusEl.classList.contains('ok')) return;
+        statusEl.classList.remove('ok');
+        statusEl.textContent = originalStatus;
+      }, 6000);
+    }
+  }
+
   document.getElementById('contactForm').addEventListener('submit', function(e){
     e.preventDefault();
     const name = document.getElementById('cf-name').value.trim();
     const email = document.getElementById('cf-email').value.trim();
     const message = document.getElementById('cf-message').value.trim();
-    const subject = encodeURIComponent(`Portfolio contact from ${name || 'a visitor'}`);
-    const body = encodeURIComponent(`${message}\n\n—\n${name}\n${email}`);
-    window.location.href = `mailto:isaiahbomf@gmail.com?subject=${subject}&body=${body}`;
+    sendForm({
+      subject: `Portfolio contact from ${name || 'a visitor'}`,
+      fields: { name, email, message },
+      statusEl: document.getElementById('contactStatus'),
+      form: this
+    });
+  });
+
+  document.getElementById('suggestForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const idea = document.getElementById('sg-idea').value.trim();
+    const from = document.getElementById('sg-from').value.trim() || '(not provided)';
+    sendForm({
+      subject: `Project idea from portfolio`,
+      fields: { idea, from },
+      statusEl: document.getElementById('suggestStatus'),
+      form: this
+    });
   });
 </script>
 
