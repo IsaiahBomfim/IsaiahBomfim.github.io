@@ -333,6 +333,21 @@
   .caveat{ font-size:12px; color:var(--ink-faint); margin-top:14px; line-height:1.5; }
   .disclaimer{ font-size:11.5px; color:var(--ink-faint); margin-top:14px; line-height:1.5; }
 
+  /* ---------- albums ---------- */
+  .albums-intro{ font-size:15px; color:var(--ink-muted); max-width:60ch; line-height:1.6; margin:0 0 26px; }
+  .albums-list{ display:flex; flex-direction:column; margin-bottom:40px; }
+  .album-row{
+    display:grid; grid-template-columns:26px 1fr auto; align-items:center; gap:16px;
+    padding:11px 4px; border-bottom:1px solid var(--line);
+  }
+  .album-row:first-child{ border-top:1px solid var(--line); }
+  .album-rank{ font-size:11.5px; color:var(--ink-faint); }
+  .album-main{ display:flex; flex-direction:column; gap:1px; min-width:0; }
+  .album-title{ font-size:14.5px; font-weight:600; color:var(--ink); }
+  .album-artist{ font-size:12.5px; color:var(--ink-muted); }
+  .album-track{ font-size:12px; color:var(--ink-faint); font-style:italic; margin-top:2px; }
+  .album-rating{ font-size:13.5px; font-weight:600; color:var(--accent); white-space:nowrap; }
+
   /* ---------- contact ---------- */
   .contact-layout{ display:grid; grid-template-columns:1.1fr .9fr; gap:32px; align-items:start; }
   .field{ margin-bottom:16px; }
@@ -405,6 +420,7 @@
         <a href="#projects" data-view="projects" role="menuitem">Projects</a>
         <a href="#resume" data-view="resume" role="menuitem">Resume &amp; Skills</a>
         <a href="#m340i" data-view="m340i" role="menuitem">M340i Deal Checker</a>
+        <a href="#albums" data-view="albums" role="menuitem">Albums</a>
         <a href="#contact" data-view="contact" role="menuitem">Contact</a>
       </div>
     </div>
@@ -670,6 +686,305 @@
     </div>
   </section>
 
+  <section data-view="albums" id="albums" hidden>
+    <div class="section-head">
+      <h2 class="section-title">Albums</h2>
+    </div>
+    <p class="albums-intro">31 albums I've actually sat down with and rated, ranked highest to lowest. Not a definitive list — just a running one. Recommend me what's next below.</p>
+
+    <div class="albums-list">
+      <div class="album-row">
+        <span class="album-rank mono">01</span>
+        <div class="album-main">
+          <span class="album-title">Good Kid, M.A.A.D City</span>
+          <span class="album-artist">Kendrick Lamar</span>
+          <span class="album-track">"Sherane a.k.a. Master Splinter's Daughter"</span>
+        </div>
+        <span class="album-rating mono">11/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">02</span>
+        <div class="album-main">
+          <span class="album-title">Never Enough</span>
+          <span class="album-artist">Daniel Caesar</span>
+          <span class="album-track">"Do You Like Me?"</span>
+        </div>
+        <span class="album-rating mono">11/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">03</span>
+        <div class="album-main">
+          <span class="album-title">To Pimp a Butterfly</span>
+          <span class="album-artist">Kendrick Lamar</span>
+          <span class="album-track">"Mortal Man"</span>
+        </div>
+        <span class="album-rating mono">10/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">04</span>
+        <div class="album-main">
+          <span class="album-title">IGOR</span>
+          <span class="album-artist">Tyler, The Creator</span>
+          <span class="album-track">"Are We Still Friends?"</span>
+        </div>
+        <span class="album-rating mono">10/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">05</span>
+        <div class="album-main">
+          <span class="album-title">Blonde</span>
+          <span class="album-artist">Frank Ocean</span>
+          <span class="album-track">"Siegfried"</span>
+        </div>
+        <span class="album-rating mono">10/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">06</span>
+        <div class="album-main">
+          <span class="album-title">Channel Orange</span>
+          <span class="album-artist">Frank Ocean</span>
+          <span class="album-track">"Bad Religion"</span>
+        </div>
+        <span class="album-rating mono">10/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">07</span>
+        <div class="album-main">
+          <span class="album-title">Freudian</span>
+          <span class="album-artist">Daniel Caesar</span>
+          <span class="album-track">"Loose"</span>
+        </div>
+        <span class="album-rating mono">10/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">08</span>
+        <div class="album-main">
+          <span class="album-title">DAMN.</span>
+          <span class="album-artist">Kendrick Lamar</span>
+          <span class="album-track">"Duckworth."</span>
+        </div>
+        <span class="album-rating mono">9.5/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">09</span>
+        <div class="album-main">
+          <span class="album-title">A Great Chaos</span>
+          <span class="album-artist">Ken Carson</span>
+          <span class="album-track">"Me N My Kup"</span>
+        </div>
+        <span class="album-rating mono">9.5/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">10</span>
+        <div class="album-main">
+          <span class="album-title">1999</span>
+          <span class="album-artist">Joey Bada$$</span>
+          <span class="album-track">"Waves"</span>
+        </div>
+        <span class="album-rating mono">9.5/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">11</span>
+        <div class="album-main">
+          <span class="album-title">Views</span>
+          <span class="album-artist">Drake</span>
+          <span class="album-track">"Summers Over Interlude"</span>
+        </div>
+        <span class="album-rating mono">9.25/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">12</span>
+        <div class="album-main">
+          <span class="album-title">Gemini Rights</span>
+          <span class="album-artist">Steve Lacy</span>
+          <span class="album-track">"Helmet"</span>
+        </div>
+        <span class="album-rating mono">9.25/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">13</span>
+        <div class="album-main">
+          <span class="album-title">My Beautiful Dark Twisted Fantasy</span>
+          <span class="album-artist">Kanye West</span>
+          <span class="album-track">"Dark Fantasy"</span>
+        </div>
+        <span class="album-rating mono">9/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">14</span>
+        <div class="album-main">
+          <span class="album-title">Fuck the World</span>
+          <span class="album-artist">Brent Faiyaz</span>
+          <span class="album-track">"Rehab (Winter in Paris)"</span>
+        </div>
+        <span class="album-rating mono">9/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">15</span>
+        <div class="album-main">
+          <span class="album-title">PLAYBOY</span>
+          <span class="album-artist">Tory Lanez</span>
+          <span class="album-track">"... The Make Up"</span>
+        </div>
+        <span class="album-rating mono">9/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">16</span>
+        <div class="album-main">
+          <span class="album-title">For All the Dogs</span>
+          <span class="album-artist">Drake</span>
+          <span class="album-track">"8AM in Charlotte"</span>
+        </div>
+        <span class="album-rating mono">9/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">17</span>
+        <div class="album-main">
+          <span class="album-title">PARTYNEXTDOOR</span>
+          <span class="album-artist">PARTYNEXTDOOR</span>
+          <span class="album-track">"TBH"</span>
+        </div>
+        <span class="album-rating mono">9/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">18</span>
+        <div class="album-main">
+          <span class="album-title">Chromakopia</span>
+          <span class="album-artist">Tyler, The Creator</span>
+          <span class="album-track">"Like Him"</span>
+        </div>
+        <span class="album-rating mono">9/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">19</span>
+        <div class="album-main">
+          <span class="album-title">Certified Lover Boy</span>
+          <span class="album-artist">Drake</span>
+          <span class="album-track">"Race My Mind"</span>
+        </div>
+        <span class="album-rating mono">9/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">20</span>
+        <div class="album-main">
+          <span class="album-title">Son of Spergy</span>
+          <span class="album-artist">Daniel Caesar</span>
+          <span class="album-track">"Who Knows"</span>
+        </div>
+        <span class="album-rating mono">9/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">21</span>
+        <div class="album-main">
+          <span class="album-title">Ghetto Fabulous</span>
+          <span class="album-artist">Rich Amiri</span>
+          <span class="album-track">"Outta There"</span>
+        </div>
+        <span class="album-rating mono">8.75/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">22</span>
+        <div class="album-main">
+          <span class="album-title">PARTYNEXTDOOR 2</span>
+          <span class="album-artist">PARTYNEXTDOOR</span>
+          <span class="album-track">"FWU"</span>
+        </div>
+        <span class="album-rating mono">8.75/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">23</span>
+        <div class="album-main">
+          <span class="album-title">GNX</span>
+          <span class="album-artist">Kendrick Lamar</span>
+          <span class="album-track">"The Heart Part 6"</span>
+        </div>
+        <span class="album-rating mono">8.5/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">24</span>
+        <div class="album-main">
+          <span class="album-title">Care Package</span>
+          <span class="album-artist">Drake</span>
+          <span class="album-track">"The Motion"</span>
+        </div>
+        <span class="album-rating mono">8.5/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">25</span>
+        <div class="album-main">
+          <span class="album-title">Nuthin' 2 Prove</span>
+          <span class="album-artist">Lil Yachty</span>
+          <span class="album-track">"Gimme My Respect"</span>
+        </div>
+        <span class="album-rating mono">8.25/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">26</span>
+        <div class="album-main">
+          <span class="album-title">Flower Boy</span>
+          <span class="album-artist">Tyler, The Creator</span>
+          <span class="album-track">"Where This Flower Blooms"</span>
+        </div>
+        <span class="album-rating mono">8/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">27</span>
+        <div class="album-main">
+          <span class="album-title">Section.80</span>
+          <span class="album-artist">Kendrick Lamar</span>
+          <span class="album-track">"Poe Man's Dreams"</span>
+        </div>
+        <span class="album-rating mono">8/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">28</span>
+        <div class="album-main">
+          <span class="album-title">Scary Hours 3</span>
+          <span class="album-artist">Drake</span>
+        </div>
+        <span class="album-rating mono">8/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">29</span>
+        <div class="album-main">
+          <span class="album-title">Wasteland</span>
+          <span class="album-artist">Brent Faiyaz</span>
+        </div>
+        <span class="album-rating mono">8/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">30</span>
+        <div class="album-main">
+          <span class="album-title">The Lo-Fis</span>
+          <span class="album-artist">Steve Lacy</span>
+        </div>
+        <span class="album-rating mono">8/10</span>
+      </div>
+      <div class="album-row">
+        <span class="album-rank mono">31</span>
+        <div class="album-main">
+          <span class="album-title">The Off-Season</span>
+          <span class="album-artist">J. Cole</span>
+        </div>
+        <span class="album-rating mono">7/10</span>
+      </div>
+    </div>
+
+    <div class="suggest" style="margin-top:8px;">
+      <div class="suggest-text">
+        <h3>Recommend me an album</h3>
+        <p>I'll actually give it a listen and a rating. Send your pick for favorite track too if you've got one.</p>
+      </div>
+      <form id="albumForm" class="suggest-form">
+        <input id="alb-name" name="name" type="text" placeholder="Album name" required>
+        <input id="alb-artist" name="artist" type="text" placeholder="Artist (optional)">
+        <input id="alb-from" name="from" type="text" placeholder="Your name (optional)">
+        <button class="btn primary" type="submit">Send album</button>
+        <p class="form-status" id="albumStatus">Goes straight to my inbox.</p>
+      </form>
+    </div>
+  </section>
+
   <section data-view="contact" id="contact" hidden>
     <div class="section-head">
       <h2 class="section-title">Contact</h2>
@@ -730,14 +1045,14 @@
     nav.classList.toggle('scrolled', window.scrollY > 8);
   }, { passive:true });
 
-  const viewNames = ['home','projects','resume','m340i','contact'];
+  const viewNames = ['home','projects','resume','m340i','albums','contact'];
   const views = {};
   viewNames.forEach(n => { views[n] = document.querySelector(`section[data-view="${n}"]`); });
   const menuBtn = document.getElementById('menuBtn');
   const menuPanel = document.getElementById('menuPanel');
   const menuLabel = document.getElementById('menuLabel');
   const menuLinks = document.querySelectorAll('.menu-panel a');
-  const labels = { home:'Home', projects:'Projects', resume:'Resume & Skills', m340i:'M340i Deal Checker', contact:'Contact' };
+  const labels = { home:'Home', projects:'Projects', resume:'Resume & Skills', m340i:'M340i Deal Checker', albums:'Albums', contact:'Contact' };
 
   function openMenu(){ menuPanel.classList.add('open'); menuBtn.setAttribute('aria-expanded','true'); }
   function closeMenu(){ menuPanel.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); }
@@ -835,6 +1150,19 @@
       subject: `Coffee spot recommendation from portfolio`,
       fields: { name, location, from },
       statusEl: document.getElementById('coffeeStatus'),
+      form: this
+    });
+  });
+
+  document.getElementById('albumForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('alb-name').value.trim();
+    const artist = document.getElementById('alb-artist').value.trim() || '(not provided)';
+    const from = document.getElementById('alb-from').value.trim() || '(not provided)';
+    sendForm({
+      subject: `Album recommendation from portfolio`,
+      fields: { name, artist, from },
+      statusEl: document.getElementById('albumStatus'),
       form: this
     });
   });
