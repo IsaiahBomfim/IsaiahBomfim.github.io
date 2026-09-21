@@ -3,283 +3,376 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BMW M340i Deal Checker</title>
+<meta name="description" content="Check a used BMW M340i listing against a fair-price estimate built from a regression on active listings.">
+<link rel="icon" type="image/png" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>M340i Deal Checker — Isaiah Bomfim</title>
 <style>
-  :root {
-    --blue: #2a78d6;
-    --orange: #eb6834;
-    --ink: #0b0b0b;
-    --secondary-ink: #52514e;
-    --muted: #898781;
-    --grid: #e1e0d9;
-    --surface: #fcfcfb;
-    --page: #f9f9f7;
-    --good: #0ca30c;
-    --warning: #fab219;
-    --critical: #d03b3b;
-    --border: rgba(11,11,11,0.10);
+  :root{
+    --paper:#F6F4EF;
+    --paper-raised:#FFFFFF;
+    --ink:#20242B;
+    --ink-muted:#5B6570;
+    --ink-faint:#8B9099;
+    --accent:#2F5D62;
+    --accent-ink:#F6F4EF;
+    --accent-2:#B8722E;
+    --critical:#B3483F;
+    --line:#DBD6C9;
+    --line-strong:#C7C1B2;
+    --shadow: 0 1px 2px rgba(32,36,43,.05), 0 6px 20px rgba(32,36,43,.06);
+    color-scheme: light;
   }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    background: var(--page);
-    color: var(--ink);
-    padding: 24px 16px;
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#15181A;
+      --paper-raised:#1C2023;
+      --ink:#E9E6DE;
+      --ink-muted:#A7ACA5;
+      --ink-faint:#767C77;
+      --accent:#7FBCB5;
+      --accent-ink:#10201F;
+      --accent-2:#E0A45C;
+      --critical:#E2897C;
+      --line:#2B3230;
+      --line-strong:#3A423F;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+      color-scheme: dark;
+    }
   }
-  .card {
-    max-width: 480px;
-    margin: 0 auto;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 28px 24px;
+  :root[data-theme="dark"]{
+    --paper:#15181A;
+    --paper-raised:#1C2023;
+    --ink:#E9E6DE;
+    --ink-muted:#A7ACA5;
+    --ink-faint:#767C77;
+    --accent:#7FBCB5;
+    --accent-ink:#10201F;
+    --accent-2:#E0A45C;
+    --critical:#E2897C;
+    --line:#2B3230;
+    --line-strong:#3A423F;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    color-scheme: dark;
   }
-  h1 {
-    font-size: 1.25rem;
-    margin: 0 0 4px;
-  }
-  .subtitle {
-    color: var(--secondary-ink);
-    font-size: 0.9rem;
-    margin: 0 0 24px;
-  }
-  label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 6px;
-    margin-top: 16px;
-    color: var(--ink);
-  }
-  label:first-of-type { margin-top: 0; }
-  select, input[type="number"] {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--grid);
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-family: inherit;
-    background: var(--surface);
-    color: var(--ink);
-  }
-  select:focus, input:focus {
-    outline: none;
-    border-color: var(--blue);
-  }
-  .row {
-    display: flex;
-    gap: 12px;
-  }
-  .row > div { flex: 1; }
-  .toggle-group {
-    display: flex;
-    gap: 8px;
-    margin-top: 6px;
-  }
-  .toggle-btn {
-    flex: 1;
-    padding: 10px 8px;
-    border: 1px solid var(--grid);
-    border-radius: 8px;
-    background: var(--surface);
-    color: var(--secondary-ink);
-    font-size: 0.9rem;
-    cursor: pointer;
-    text-align: center;
-  }
-  .toggle-btn.active {
-    border-color: var(--blue);
-    background: rgba(42,120,214,0.08);
-    color: var(--blue);
-    font-weight: 600;
-  }
-  button.submit {
-    width: 100%;
-    margin-top: 22px;
-    padding: 13px;
-    border: none;
-    border-radius: 8px;
-    background: var(--blue);
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  button.submit:hover { background: #2266ba; }
 
-  #result {
-    margin-top: 24px;
-    display: none;
+  /* semantic aliases the checker's own JS writes into result-dot colors */
+  :root{ --good:var(--accent); --warning:var(--ink-faint); --orange:var(--accent-2); --blue:var(--accent); }
+
+  *{ box-sizing:border-box; }
+  html,body{ background:var(--paper); }
+  body{
+    margin:0; padding-inline:24px; background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans", "Segoe UI", Arial, sans-serif; -webkit-font-smoothing:antialiased;
   }
-  .result-card {
-    border-radius: 10px;
-    padding: 18px 20px;
-    border: 1px solid var(--grid);
+  a{ color:inherit; }
+  .wrap{ max-width:920px; margin:0 auto; }
+  h1,h2,h3{ font-family:"Fraunces","Iowan Old Style",Georgia,serif; font-weight:600; text-wrap:balance; margin:0; }
+  .mono{ font-family:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace; font-variant-numeric:tabular-nums; }
+
+  /* ---------- nav (mirrors the portfolio's nav so this feels like the same site) ---------- */
+  nav{
+    position:sticky; top:env(safe-area-inset-top,0px);
+    display:flex; align-items:center; justify-content:space-between;
+    padding-block:16px; background:color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter:blur(6px); z-index:20; border-bottom:1px solid var(--line);
   }
-  .verdict {
-    font-size: 1.1rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
+  .brand{ font-family:"Fraunces",serif; font-weight:600; font-size:17px; letter-spacing:.2px; text-decoration:none; display:inline-block; }
+  .brand-letters span{ display:inline-block; will-change:transform; }
+  .brand:hover .brand-letters span{ animation:brand-ripple .7s ease-in-out; }
+  @keyframes brand-ripple{
+    0%{ transform:translateY(0); color:inherit; }
+    35%{ transform:translateY(-5px); color:var(--accent); }
+    65%{ transform:translateY(2px); }
+    100%{ transform:translateY(0); color:inherit; }
   }
-  .verdict-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
+  .menu{ position:relative; }
+  .menu-btn{
+    display:flex; align-items:center; gap:7px; background:transparent; border:1px solid var(--line-strong);
+    border-radius:3px; padding:8px 13px; font-size:13.5px; font-family:inherit; color:var(--ink); cursor:pointer;
   }
-  .price-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9rem;
-    padding: 6px 0;
-    border-top: 1px solid var(--grid);
+  .menu-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .menu-btn svg{ width:10px; height:10px; flex:none; transition:transform .15s ease; }
+  .menu-btn[aria-expanded="true"] svg{ transform:rotate(180deg); }
+  .menu-panel{
+    position:absolute; top:calc(100% + 8px); right:0; min-width:196px;
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:5px;
+    box-shadow:var(--shadow); padding:6px; display:flex; flex-direction:column; gap:1px;
+    opacity:0; visibility:hidden; transform:translateY(-4px);
+    transition:opacity .15s ease, transform .15s ease, visibility .15s; pointer-events:none;
   }
-  .price-row:first-of-type { border-top: none; }
-  .price-row .label { color: var(--secondary-ink); }
-  .price-row .value { font-weight: 600; font-variant-numeric: tabular-nums; }
-  .caveat {
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-top: 14px;
-    line-height: 1.4;
+  .menu-panel::before{ content:""; position:absolute; top:-8px; left:0; right:0; height:8px; }
+  .menu-panel.open{ opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto; }
+  @media (hover:hover){
+    .menu:hover .menu-panel{ opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto; }
   }
-  .disclaimer {
-    font-size: 0.72rem;
-    color: var(--muted);
-    text-align: center;
-    margin-top: 18px;
-    line-height: 1.4;
+  .menu-panel a{ display:block; padding:9px 12px; border-radius:3px; text-decoration:none; font-size:13.5px; color:var(--ink-muted); }
+  .menu-panel a:hover{ background:color-mix(in srgb, var(--accent) 10%, transparent); color:var(--accent); }
+  .menu-panel a[aria-current="page"]{ color:var(--accent); font-weight:600; }
+
+  /* ---------- page ---------- */
+  .eyebrow-row{ padding-block:28px 4px; display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-muted); }
+  .eyebrow-row a{ text-decoration:none; color:var(--ink-muted); }
+  .eyebrow-row a:hover{ color:var(--accent); }
+  h1.tool-title{ font-size:clamp(28px,5vw,38px); line-height:1.05; margin-top:6px; }
+  p.tool-sub{ margin-top:10px; font-size:15px; color:var(--ink-muted); max-width:60ch; line-height:1.6; }
+
+  .tool-layout{ display:grid; grid-template-columns:1fr; gap:24px; padding-block:28px 60px; max-width:520px; }
+
+  .card{
+    background:var(--paper-raised); border:1px solid var(--line); border-radius:6px;
+    padding:26px 26px 24px; box-shadow:var(--shadow);
   }
+  label{ display:block; font-size:12.5px; font-weight:600; color:var(--ink-muted); margin-bottom:6px; margin-top:18px; }
+  label:first-of-type{ margin-top:0; }
+  label .hint{ font-weight:400; color:var(--ink-faint); }
+  select, input[type="number"]{
+    width:100%; font-family:inherit; font-size:14.5px; color:var(--ink);
+    background:var(--paper); border:1px solid var(--line-strong); border-radius:4px;
+    padding:10px 12px;
+  }
+  select:focus, input:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .toggle-group{ display:flex; gap:8px; margin-top:6px; }
+  .toggle-btn{
+    flex:1; padding:10px 8px; border:1px solid var(--line-strong); border-radius:4px;
+    background:var(--paper); color:var(--ink-muted); font-size:13.5px; cursor:pointer; text-align:center;
+  }
+  .toggle-btn.active{
+    border-color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent);
+    color:var(--accent); font-weight:600;
+  }
+  button.submit{
+    width:100%; margin-top:24px; padding:12px; border:1px solid var(--accent); border-radius:3px;
+    background:var(--accent); color:var(--accent-ink); font-family:inherit; font-size:14px; font-weight:600;
+    letter-spacing:.2px; cursor:pointer;
+  }
+  button.submit:hover{ opacity:.9; }
+
+  #result{ margin-top:22px; display:none; }
+  .result-card{ border-radius:5px; padding:18px 20px; border:1px solid var(--line); background:var(--paper); }
+  .verdict{ font-size:16px; font-weight:600; font-family:"Fraunces",serif; display:flex; align-items:center; gap:9px; margin-bottom:10px; }
+  .verdict-dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .price-row{ display:flex; justify-content:space-between; font-size:13.5px; padding:7px 0; border-top:1px solid var(--line); }
+  .price-row:first-of-type{ border-top:none; }
+  .price-row .label{ color:var(--ink-muted); }
+  .price-row .value{ font-weight:600; font-variant-numeric:tabular-nums; font-family:"IBM Plex Mono",monospace; }
+  .caveat{ font-size:12px; color:var(--ink-faint); margin-top:14px; line-height:1.5; }
+  .disclaimer{ font-size:11.5px; color:var(--ink-faint); margin-top:18px; line-height:1.5; }
+
+  /* ---------- theme toggle (same component as the main site) ---------- */
+  .theme-toggle{
+    position:fixed; right:20px; bottom:calc(20px + env(safe-area-inset-bottom,0px));
+    width:42px; height:42px; border-radius:50%; background:var(--paper-raised); border:1px solid var(--line-strong);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:var(--shadow);
+    z-index:30; color:var(--ink); padding:0;
+  }
+  .theme-toggle:hover{ border-color:var(--accent); color:var(--accent); }
+  .theme-toggle svg{ position:absolute; width:19px; height:19px; transition:opacity .25s ease, transform .35s ease; }
+  .theme-toggle .icon-sun{ opacity:1; transform:rotate(0deg) scale(1); }
+  .theme-toggle .icon-moon{ opacity:0; transform:rotate(-55deg) scale(.6); }
+  .theme-toggle.is-dark .icon-sun{ opacity:0; transform:rotate(55deg) scale(.6); }
+  .theme-toggle.is-dark .icon-moon{ opacity:1; transform:rotate(0deg) scale(1); }
+  @media (prefers-reduced-motion: reduce){ .theme-toggle svg{ transition:none; } }
+
+  @media (max-width:640px){ .menu-panel{ min-width:180px; } }
 </style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 </head>
 <body>
 
-<div class="card">
-  <h1>BMW M340i Deal Checker</h1>
-  <p class="subtitle">2020–2022 M340i / M340i xDrive &mdash; estimate a fair price and check a listing against it.</p>
+<div class="wrap">
+  <nav id="nav">
+    <a class="brand" href="index.html#home"><span class="brand-letters" id="brandLetters">Isaiah Bomfim</span></a>
+    <div class="menu">
+      <button id="menuBtn" class="menu-btn" type="button" aria-haspopup="true" aria-expanded="false">
+        <span>Projects</span>
+        <svg viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div id="menuPanel" class="menu-panel" role="menu">
+        <a href="index.html#home" role="menuitem">Home</a>
+        <a href="index.html#projects" role="menuitem" aria-current="page">Projects</a>
+        <a href="index.html#resume" role="menuitem">Resume &amp; Skills</a>
+        <a href="index.html#contact" role="menuitem">Contact</a>
+      </div>
+    </div>
+  </nav>
 
-  <label for="year">Model year</label>
-  <select id="year">
-    <option value="2020">2020</option>
-    <option value="2021" selected>2021</option>
-    <option value="2022">2022</option>
-  </select>
+  <div class="eyebrow-row"><a href="index.html#projects">← Back to projects</a></div>
+  <h1 class="tool-title">M340i Deal Checker</h1>
+  <p class="tool-sub">2020–2022 BMW M340i / M340i xDrive — estimate a fair price and check a listing against it, built from a regression on 213 active listings.</p>
 
-  <label>Drivetrain</label>
-  <div class="toggle-group" id="drivetrainToggle">
-    <div class="toggle-btn" data-value="0">RWD</div>
-    <div class="toggle-btn active" data-value="1">xDrive</div>
+  <div class="tool-layout">
+    <div class="card">
+      <label for="year">Model year</label>
+      <select id="year">
+        <option value="2020">2020</option>
+        <option value="2021" selected>2021</option>
+        <option value="2022">2022</option>
+      </select>
+
+      <label>Drivetrain</label>
+      <div class="toggle-group" id="drivetrainToggle">
+        <div class="toggle-btn" data-value="0">RWD</div>
+        <div class="toggle-btn active" data-value="1">xDrive</div>
+      </div>
+
+      <label for="miles">Mileage</label>
+      <input type="number" id="miles" value="50000" min="0" step="1000">
+
+      <label for="options">Number of extra options/packages installed <span class="hint">(0&ndash;20, leave at 5 if unsure)</span></label>
+      <input type="number" id="options" value="5" min="0" max="20" step="1">
+
+      <label for="askingPrice">Asking price you're checking (optional)</label>
+      <input type="number" id="askingPrice" placeholder="e.g. 39500" min="0" step="500">
+
+      <button class="submit" onclick="checkDeal()">Check this deal</button>
+
+      <div id="result"></div>
+
+      <p class="disclaimer">
+        Estimate built from a regression on 213 active 2020&ndash;2022 M340i listings
+        (Visor API). Average error ~6% ($2,356). Does not account for
+        condition, accident history, or service records &mdash; use as a screening tool,
+        not a purchase decision.
+      </p>
+      <p class="disclaimer" style="margin-top:6px;">
+        Data refreshed monthly. <strong>Last refreshed: <span id="lastRefreshed">September 21, 2026</span></strong>
+      </p>
+    </div>
   </div>
-
-  <label for="miles">Mileage</label>
-  <input type="number" id="miles" value="50000" min="0" step="1000">
-
-  <label for="options">Number of extra options/packages installed <span style="font-weight:400;color:var(--muted);">(0&ndash;16, leave at 5 if unsure)</span></label>
-  <input type="number" id="options" value="5" min="0" max="20" step="1">
-
-  <label for="askingPrice">Asking price you're checking (optional)</label>
-  <input type="number" id="askingPrice" placeholder="e.g. 39500" min="0" step="500">
-
-  <button class="submit" onclick="checkDeal()">Check this deal</button>
-
-  <div id="result"></div>
-
-  <p class="disclaimer">
-    Estimate built from a regression on 213 active 2020&ndash;2022 M340i listings
-    (Visor API). Average error ~6% ($2,356). Does not account for
-    condition, accident history, or service records &mdash; use as a screening tool,
-    not a purchase decision.
-  </p>
-  <p class="disclaimer" style="margin-top:6px;">
-    Data refreshed monthly. <strong>Last refreshed: <span id="lastRefreshed">September 21, 2026</span></strong>
-  </p>
 </div>
 
+<button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8l1.8-1.8M18 6l1.8-1.8"/></svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
+</button>
+
 <script>
-// --- Model coefficients (linear regression on log(price), fit on 213 listings) ---
-// log(price) = intercept + b_miles*miles_10k + b_year*(year-2021) + b_xdrive*is_xdrive + b_opts*n_options
-const MODEL = {
-  intercept: 10.881947457961928,
-  miles_10k: -0.05536113,
-  year_c: 0.02902555,
-  is_xdrive: 0.04566597,
-  n_options: 0.00018023,
-  mae_dollars: 2356 // cross-validated mean absolute error, used for the range +/- and verdict bands
-};
+  // nav: letter-ripple brand + hover/click dropdown (same behavior as the main site)
+  const brandLetters = document.getElementById('brandLetters');
+  brandLetters.innerHTML = [...brandLetters.textContent].map((ch, i) =>
+    `<span style="animation-delay:${i * 28}ms">${ch === ' ' ? '&nbsp;' : ch}</span>`
+  ).join('');
 
-function predictPrice(year, milesVal, isXdrive, nOptions) {
-  const miles10k = milesVal / 10000;
-  const yearC = year - 2021;
-  const logPrice = MODEL.intercept
-    + MODEL.miles_10k * miles10k
-    + MODEL.year_c * yearC
-    + MODEL.is_xdrive * isXdrive
-    + MODEL.n_options * nOptions;
-  return Math.exp(logPrice);
-}
+  const menuBtn = document.getElementById('menuBtn');
+  const menuPanel = document.getElementById('menuPanel');
+  function openMenu(){ menuPanel.classList.add('open'); menuBtn.setAttribute('aria-expanded','true'); }
+  function closeMenu(){ menuPanel.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); }
+  menuBtn.addEventListener('click', (e) => { e.stopPropagation(); menuPanel.classList.contains('open') ? closeMenu() : openMenu(); });
+  document.addEventListener('click', (e) => { if(menuPanel.classList.contains('open') && !menuPanel.contains(e.target) && e.target !== menuBtn) closeMenu(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeMenu(); });
 
-function fmt(n) {
-  return '$' + Math.round(n).toLocaleString('en-US');
-}
+  // theme toggle: same logic/storage key as the main site, so the choice carries across pages
+  (function(){
+    const toggle = document.getElementById('themeToggle');
+    const root = document.documentElement;
+    function getStored(){ try{ return localStorage.getItem('theme'); }catch(e){ return null; } }
+    function setStored(v){ try{ localStorage.setItem('theme', v); }catch(e){} }
+    function systemPrefersDark(){ return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }
+    function effectiveTheme(){
+      const stored = getStored();
+      return (stored === 'light' || stored === 'dark') ? stored : (systemPrefersDark() ? 'dark' : 'light');
+    }
+    function updateIcon(){
+      const dark = effectiveTheme() === 'dark';
+      toggle.classList.toggle('is-dark', dark);
+      toggle.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    }
+    const stored = getStored();
+    if(stored === 'light' || stored === 'dark') root.setAttribute('data-theme', stored);
+    updateIcon();
+    toggle.addEventListener('click', () => {
+      const next = effectiveTheme() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      setStored(next);
+      updateIcon();
+    });
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if(!getStored()) updateIcon(); });
+    }
+  })();
 
-document.querySelectorAll('#drivetrainToggle .toggle-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#drivetrainToggle .toggle-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
+  // --- Model coefficients (linear regression on log(price), fit on 213 listings) ---
+  // log(price) = intercept + b_miles*miles_10k + b_year*(year-2021) + b_xdrive*is_xdrive + b_opts*n_options
+  const MODEL = {
+    intercept: 10.881947457961928,
+    miles_10k: -0.05536113,
+    year_c: 0.02902555,
+    is_xdrive: 0.04566597,
+    n_options: 0.00018023,
+    mae_dollars: 2356 // cross-validated mean absolute error, used for the range +/- and verdict bands
+  };
 
-function checkDeal() {
-  const year = parseInt(document.getElementById('year').value, 10);
-  const miles = parseFloat(document.getElementById('miles').value) || 0;
-  const nOptions = parseFloat(document.getElementById('options').value) || 0;
-  const isXdrive = parseInt(document.querySelector('#drivetrainToggle .toggle-btn.active').dataset.value, 10);
-  const askingRaw = document.getElementById('askingPrice').value;
-  const asking = askingRaw ? parseFloat(askingRaw) : null;
-
-  const predicted = predictPrice(year, miles, isXdrive, nOptions);
-  const low = predicted - MODEL.mae_dollars;
-  const high = predicted + MODEL.mae_dollars;
-
-  let verdictHtml = '';
-  if (asking !== null && asking > 0) {
-    const diffPct = ((asking - predicted) / predicted) * 100;
-    let label, color;
-    if (diffPct <= -12) { label = 'Excellent deal'; color = 'var(--good)'; }
-    else if (diffPct <= -6) { label = 'Good deal'; color = 'var(--good)'; }
-    else if (diffPct < 6) { label = 'Fair price'; color = 'var(--warning)'; }
-    else if (diffPct < 12) { label = 'Priced a bit high'; color = 'var(--orange)'; }
-    else { label = 'Overpriced'; color = 'var(--critical)'; }
-
-    const diffDollars = asking - predicted;
-    const diffSign = diffDollars >= 0 ? '+' : '−';
-
-    verdictHtml = `
-      <div class="verdict"><span class="verdict-dot" style="background:${color};"></span>${label}</div>
-      <div class="price-row"><span class="label">Asking price</span><span class="value">${fmt(asking)}</span></div>
-      <div class="price-row"><span class="label">Model estimate</span><span class="value">${fmt(predicted)}</span></div>
-      <div class="price-row"><span class="label">Difference</span><span class="value">${diffSign}${fmt(Math.abs(diffDollars))} (${diffPct.toFixed(1)}%)</span></div>
-      <div class="price-row"><span class="label">Likely fair range</span><span class="value">${fmt(low)} &ndash; ${fmt(high)}</span></div>
-    `;
-  } else {
-    verdictHtml = `
-      <div class="verdict"><span class="verdict-dot" style="background:var(--blue);"></span>Estimated fair price</div>
-      <div class="price-row"><span class="label">Model estimate</span><span class="value">${fmt(predicted)}</span></div>
-      <div class="price-row"><span class="label">Likely fair range</span><span class="value">${fmt(low)} &ndash; ${fmt(high)}</span></div>
-    `;
+  function predictPrice(year, milesVal, isXdrive, nOptions) {
+    const miles10k = milesVal / 10000;
+    const yearC = year - 2021;
+    const logPrice = MODEL.intercept
+      + MODEL.miles_10k * miles10k
+      + MODEL.year_c * yearC
+      + MODEL.is_xdrive * isXdrive
+      + MODEL.n_options * nOptions;
+    return Math.exp(logPrice);
   }
 
-  const resultDiv = document.getElementById('result');
-  resultDiv.innerHTML = `<div class="result-card">${verdictHtml}
-    <div class="caveat">Based on mileage, model year, drivetrain, and option count only.
-    Condition, accident history, and location aren't factored in.</div>
-  </div>`;
-  resultDiv.style.display = 'block';
-}
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  document.querySelectorAll('#drivetrainToggle .toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#drivetrainToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  function checkDeal() {
+    const year = parseInt(document.getElementById('year').value, 10);
+    const miles = parseFloat(document.getElementById('miles').value) || 0;
+    const nOptions = parseFloat(document.getElementById('options').value) || 0;
+    const isXdrive = parseInt(document.querySelector('#drivetrainToggle .toggle-btn.active').dataset.value, 10);
+    const askingRaw = document.getElementById('askingPrice').value;
+    const asking = askingRaw ? parseFloat(askingRaw) : null;
+
+    const predicted = predictPrice(year, miles, isXdrive, nOptions);
+    const low = predicted - MODEL.mae_dollars;
+    const high = predicted + MODEL.mae_dollars;
+
+    let verdictHtml = '';
+    if (asking !== null && asking > 0) {
+      const diffPct = ((asking - predicted) / predicted) * 100;
+      let label, color;
+      if (diffPct <= -12) { label = 'Excellent deal'; color = 'var(--good)'; }
+      else if (diffPct <= -6) { label = 'Good deal'; color = 'var(--good)'; }
+      else if (diffPct < 6) { label = 'Fair price'; color = 'var(--warning)'; }
+      else if (diffPct < 12) { label = 'Priced a bit high'; color = 'var(--orange)'; }
+      else { label = 'Overpriced'; color = 'var(--critical)'; }
+
+      const diffDollars = asking - predicted;
+      const diffSign = diffDollars >= 0 ? '+' : '−';
+
+      verdictHtml = `
+        <div class="verdict"><span class="verdict-dot" style="background:${color};"></span>${label}</div>
+        <div class="price-row"><span class="label">Asking price</span><span class="value">${fmt(asking)}</span></div>
+        <div class="price-row"><span class="label">Model estimate</span><span class="value">${fmt(predicted)}</span></div>
+        <div class="price-row"><span class="label">Difference</span><span class="value">${diffSign}${fmt(Math.abs(diffDollars))} (${diffPct.toFixed(1)}%)</span></div>
+        <div class="price-row"><span class="label">Likely fair range</span><span class="value">${fmt(low)} &ndash; ${fmt(high)}</span></div>
+      `;
+    } else {
+      verdictHtml = `
+        <div class="verdict"><span class="verdict-dot" style="background:var(--blue);"></span>Estimated fair price</div>
+        <div class="price-row"><span class="label">Model estimate</span><span class="value">${fmt(predicted)}</span></div>
+        <div class="price-row"><span class="label">Likely fair range</span><span class="value">${fmt(low)} &ndash; ${fmt(high)}</span></div>
+      `;
+    }
+
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = `<div class="result-card">${verdictHtml}
+      <div class="caveat">Based on mileage, model year, drivetrain, and option count only.
+      Condition, accident history, and location aren't factored in.</div>
+    </div>`;
+    resultDiv.style.display = 'block';
+  }
 </script>
 
 </body>

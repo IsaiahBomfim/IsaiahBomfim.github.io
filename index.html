@@ -367,6 +367,7 @@
         <a href="#home" data-view="home" role="menuitem">Home</a>
         <a href="#projects" data-view="projects" role="menuitem">Projects</a>
         <a href="#resume" data-view="resume" role="menuitem">Resume &amp; Skills</a>
+        <a href="m340i-deal-checker.html" role="menuitem">M340i Deal Checker</a>
         <a href="#contact" data-view="contact" role="menuitem">Contact</a>
       </div>
     </div>
@@ -439,12 +440,21 @@
         </div>
       </div>
 
-      <div class="card placeholder">
+      <div class="card live">
         <div class="card-top">
-          <h3>Project two</h3>
-          <span class="status soon">In progress</span>
+          <h3>M340i Deal Checker</h3>
+          <span class="status live">Live</span>
         </div>
-        <p class="desc">Next build is in the pipeline, check back soon.</p>
+        <p class="desc">A pricing tool for used BMW M340i listings (2020–2022). A regression fit on 213 active listings estimates a fair price from mileage, model year, drivetrain, and option count, then checks a real asking price against it.</p>
+        <p class="tags">JavaScript, regression modeling, Visor API</p>
+        <ul class="findings">
+          <li>Model trained on 213 active listings, cross-validated to an average error of about 6% ($2,356)</li>
+          <li>Verdict bands (excellent deal → overpriced) based on percent difference from the model estimate, not a fixed dollar cutoff</li>
+          <li>Data refreshes monthly rather than being a one-time snapshot</li>
+        </ul>
+        <div class="card-links">
+          <a href="m340i-deal-checker.html">Try the tool →</a>
+        </div>
       </div>
 
       <div class="card placeholder">
