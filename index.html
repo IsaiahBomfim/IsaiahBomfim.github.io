@@ -433,7 +433,7 @@
 
       <p class="bio">Two most recent builds: the <a class="inline-link" href="#projects">NBA Trade Impact Analysis</a> pulls live stats through a July 2026 trade and argues both sides of whether Boston's deal actually made sense, and the <a class="inline-link" href="#m340i">M340i Deal Checker</a> is a fair-price tool I built for my favorite car after getting tired of guessing whether a listing was actually a good deal.</p>
 
-      <p class="bio">In my free time, I enjoy watching basketball and trying new coffee spots.</p>
+      <p class="bio">In my free time, I'm probably watching basketball or old soccer highlights, and trying new coffee spots.</p>
 
       <p class="currently"><span class="dot" aria-hidden="true"></span>Currently: working at Best Buy, active in Bentley's A.I. Society, and open to Summer 2027 data &amp; AI internships.</p>
 
@@ -466,6 +466,7 @@
       <form id="coffeeForm" class="suggest-form">
         <input id="cof-name" name="name" type="text" placeholder="Coffee spot name" required>
         <input id="cof-location" name="location" type="text" placeholder="Location (optional)">
+        <input id="cof-from" name="from" type="text" placeholder="Your name (optional)">
         <button class="btn primary" type="submit">Send spot</button>
         <p class="form-status" id="coffeeStatus">All the spots I try within the next year become part of a data project.</p>
       </form>
@@ -829,9 +830,10 @@
     e.preventDefault();
     const name = document.getElementById('cof-name').value.trim();
     const location = document.getElementById('cof-location').value.trim() || '(not provided)';
+    const from = document.getElementById('cof-from').value.trim() || '(not provided)';
     sendForm({
       subject: `Coffee spot recommendation from portfolio`,
-      fields: { name, location },
+      fields: { name, location, from },
       statusEl: document.getElementById('coffeeStatus'),
       form: this
     });
