@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BMW M340i Deal Checker</title>
+<style>
+  :root {
+    --blue: #2a78d6;
+    --orange: #eb6834;
+    --ink: #0b0b0b;
+    --secondary-ink: #52514e;
+    --muted: #898781;
+    --grid: #e1e0d9;
+    --surface: #fcfcfb;
+    --page: #f9f9f7;
+    --good: #0ca30c;
+    --warning: #fab219;
+    --critical: #d03b3b;
+    --border: rgba(11,11,11,0.10);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page);
+    color: var(--ink);
+    padding: 24px 16px;
+  }
+  .card {
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px;
+  }
+  h1 {
+    font-size: 1.25rem;
+    margin: 0 0 4px;
+  }
+  .subtitle {
+    color: var(--secondary-ink);
+    font-size: 0.9rem;
+    margin: 0 0 24px;
+  }
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    margin-top: 16px;
+    color: var(--ink);
+  }
+  label:first-of-type { margin-top: 0; }
+  select, input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--grid);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: var(--surface);
+    color: var(--ink);
+  }
+  select:focus, input:focus {
+    outline: none;
+    border-color: var(--blue);
+  }
+  .row {
+    display: flex;
+    gap: 12px;
+  }
+  .row > div { flex: 1; }
+  .toggle-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .toggle-btn {
+    flex: 1;
+    padding: 10px 8px;
+    border: 1px solid var(--grid);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--secondary-ink);
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-align: center;
+  }
+  .toggle-btn.active {
+    border-color: var(--blue);
+    background: rgba(42,120,214,0.08);
+    color: var(--blue);
+    font-weight: 600;
+  }
+  button.submit {
+    width: 100%;
+    margin-top: 22px;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background: var(--blue);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button.submit:hover { background: #2266ba; }
+
+  #result {
+    margin-top: 24px;
+    display: none;
+  }
+  .result-card {
+    border-radius: 10px;
+    padding: 18px 20px;
+    border: 1px solid var(--grid);
+  }
+  .verdict {
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .verdict-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    padding: 6px 0;
+    border-top: 1px solid var(--grid);
+  }
+  .price-row:first-of-type { border-top: none; }
+  .price-row .label { color: var(--secondary-ink); }
+  .price-row .value { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .caveat {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 14px;
+    line-height: 1.4;
+  }
+  .disclaimer {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 18px;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>BMW M340i Deal Checker</h1>
+  <p class="subtitle">2020–2022 M340i / M340i xDrive &mdash; estimate a fair price and check a listing against it.</p>
+
+  <label for="year">Model year</label>
+  <select id="year">
+    <option value="2020">2020</option>
+    <option value="2021" selected>2021</option>
+    <option value="2022">2022</option>
+  </select>
+
+  <label>Drivetrain</label>
+  <div class="toggle-group" id="drivetrainToggle">
+    <div class="toggle-btn" data-value="0">RWD</div>
+    <div class="toggle-btn active" data-value="1">xDrive</div>
+  </div>
+
+  <label for="miles">Mileage</label>
+  <input type="number" id="miles" value="50000" min="0" step="1000">
+
+  <label for="options">Number of extra options/packages installed <span style="font-weight:400;color:var(--muted);">(0&ndash;16, leave at 5 if unsure)</span></label>
+  <input type="number" id="options" value="5" min="0" max="20" step="1">
+
+  <label for="askingPrice">Asking price you're checking (optional)</label>
+  <input type="number" id="askingPrice" placeholder="e.g. 39500" min="0" step="500">
+
+  <button class="submit" onclick="checkDeal()">Check this deal</button>
+
+  <div id="result"></div>
+
+  <p class="disclaimer">
+    Estimate built from a regression on 213 active 2020&ndash;2022 M340i listings
+    (Visor API). Average error ~6% ($2,356). Does not account for
+    condition, accident history, or service records &mdash; use as a screening tool,
+    not a purchase decision.
+  </p>
+  <p class="disclaimer" style="margin-top:6px;">
+    Data refreshed monthly. <strong>Last refreshed: <span id="lastRefreshed">September 21, 2026</span></strong>
+  </p>
+</div>
+
+<script>
+// --- Model coefficients (linear regression on log(price), fit on 213 listings) ---
+// log(price) = intercept + b_miles*miles_10k + b_year*(year-2021) + b_xdrive*is_xdrive + b_opts*n_options
+const MODEL = {
+  intercept: 10.881947457961928,
+  miles_10k: -0.05536113,
+  year_c: 0.02902555,
+  is_xdrive: 0.04566597,
+  n_options: 0.00018023,
+  mae_dollars: 2356 // cross-validated mean absolute error, used for the range +/- and verdict bands
+};
+
+function predictPrice(year, milesVal, isXdrive, nOptions) {
+  const miles10k = milesVal / 10000;
+  const yearC = year - 2021;
+  const logPrice = MODEL.intercept
+    + MODEL.miles_10k * miles10k
+    + MODEL.year_c * yearC
+    + MODEL.is_xdrive * isXdrive
+    + MODEL.n_options * nOptions;
+  return Math.exp(logPrice);
+}
+
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+
+document.querySelectorAll('#drivetrainToggle .toggle-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#drivetrainToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+function checkDeal() {
+  const year = parseInt(document.getElementById('year').value, 10);
+  const miles = parseFloat(document.getElementById('miles').value) || 0;
+  const nOptions = parseFloat(document.getElementById('options').value) || 0;
+  const isXdrive = parseInt(document.querySelector('#drivetrainToggle .toggle-btn.active').dataset.value, 10);
+  const askingRaw = document.getElementById('askingPrice').value;
+  const asking = askingRaw ? parseFloat(askingRaw) : null;
+
+  const predicted = predictPrice(year, miles, isXdrive, nOptions);
+  const low = predicted - MODEL.mae_dollars;
+  const high = predicted + MODEL.mae_dollars;
+
+  let verdictHtml = '';
+  if (asking !== null && asking > 0) {
+    const diffPct = ((asking - predicted) / predicted) * 100;
+    let label, color;
+    if (diffPct <= -12) { label = 'Excellent deal'; color = 'var(--good)'; }
+    else if (diffPct <= -6) { label = 'Good deal'; color = 'var(--good)'; }
+    else if (diffPct < 6) { label = 'Fair price'; color = 'var(--warning)'; }
+    else if (diffPct < 12) { label = 'Priced a bit high'; color = 'var(--orange)'; }
+    else { label = 'Overpriced'; color = 'var(--critical)'; }
+
+    const diffDollars = asking - predicted;
+    const diffSign = diffDollars >= 0 ? '+' : '−';
+
+    verdictHtml = `
+      <div class="verdict"><span class="verdict-dot" style="background:${color};"></span>${label}</div>
+      <div class="price-row"><span class="label">Asking price</span><span class="value">${fmt(asking)}</span></div>
+      <div class="price-row"><span class="label">Model estimate</span><span class="value">${fmt(predicted)}</span></div>
+      <div class="price-row"><span class="label">Difference</span><span class="value">${diffSign}${fmt(Math.abs(diffDollars))} (${diffPct.toFixed(1)}%)</span></div>
+      <div class="price-row"><span class="label">Likely fair range</span><span class="value">${fmt(low)} &ndash; ${fmt(high)}</span></div>
+    `;
+  } else {
+    verdictHtml = `
+      <div class="verdict"><span class="verdict-dot" style="background:var(--blue);"></span>Estimated fair price</div>
+      <div class="price-row"><span class="label">Model estimate</span><span class="value">${fmt(predicted)}</span></div>
+      <div class="price-row"><span class="label">Likely fair range</span><span class="value">${fmt(low)} &ndash; ${fmt(high)}</span></div>
+    `;
+  }
+
+  const resultDiv = document.getElementById('result');
+  resultDiv.innerHTML = `<div class="result-card">${verdictHtml}
+    <div class="caveat">Based on mileage, model year, drivetrain, and option count only.
+    Condition, accident history, and location aren't factored in.</div>
+  </div>`;
+  resultDiv.style.display = 'block';
+}
+</script>
+
+</body>
+</html>
