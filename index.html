@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Isaiah Bomfim — Bentley University data analytics student. Python, SQL, and Power BI projects, resume, certifications, and contact.">
+<meta name="description" content="Isaiah Bomfim — Bentley University data analytics student. Python, SQL, Power BI projects including an NBA trade impact analysis and a BMW M340i pricing tool.">
 <link rel="icon" type="image/png" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:title" content="Isaiah Bomfim">
+<meta property="og:description" content="Data analytics & AI at Bentley University. Projects, resume, and skills.">
+<meta property="og:image" content="https://isaiahbomfim.github.io/og-image.png">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://isaiahbomfim.github.io/">
-<meta property="og:title" content="Isaiah Bomfim — Data Analytics & AI">
-<meta property="og:description" content="Bentley University sophomore turning raw data into decisions worth arguing about. Python, SQL, Power BI projects, resume, and certifications.">
-<meta property="og:image" content="https://isaiahbomfim.github.io/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Isaiah Bomfim — Data Analytics & AI">
-<meta name="twitter:description" content="Bentley University sophomore turning raw data into decisions worth arguing about.">
+<meta name="twitter:title" content="Isaiah Bomfim">
+<meta name="twitter:description" content="Data analytics & AI at Bentley University. Projects, resume, and skills.">
 <meta name="twitter:image" content="https://isaiahbomfim.github.io/og-image.png">
 <title>Isaiah Bomfim</title>
 <style>
@@ -28,6 +27,7 @@
     --accent:#2F5D62;
     --accent-ink:#F6F4EF;
     --accent-2:#B8722E;
+    --critical:#B3483F;
     --line:#DBD6C9;
     --line-strong:#C7C1B2;
     --shadow: 0 1px 2px rgba(32,36,43,.05), 0 6px 20px rgba(32,36,43,.06);
@@ -43,6 +43,7 @@
       --accent:#7FBCB5;
       --accent-ink:#10201F;
       --accent-2:#E0A45C;
+      --critical:#E2897C;
       --line:#2B3230;
       --line-strong:#3A423F;
       --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
@@ -58,11 +59,15 @@
     --accent:#7FBCB5;
     --accent-ink:#10201F;
     --accent-2:#E0A45C;
+    --critical:#E2897C;
     --line:#2B3230;
     --line-strong:#3A423F;
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
     color-scheme: dark;
   }
+
+  /* semantic aliases used by the deal-checker view */
+  :root{ --good:var(--accent); --warning:var(--ink-faint); --orange:var(--accent-2); --blue:var(--accent); }
 
   *{ box-sizing:border-box; }
   html,body{ background:var(--paper); }
@@ -174,6 +179,8 @@
   h1.name{ font-size:clamp(36px,7vw,58px); line-height:1.02; }
   .role{ margin-top:10px; font-size:17px; color:var(--ink-muted); max-width:60ch; }
   .bio{ margin-top:18px; font-size:16px; line-height:1.65; color:var(--ink); max-width:62ch; }
+  .inline-link{ color:var(--accent); text-decoration:underline; text-decoration-color:var(--line-strong); text-underline-offset:2px; }
+  .inline-link:hover{ text-decoration-color:var(--accent); }
 
   .currently{ display:flex; align-items:flex-start; gap:9px; margin-top:18px; font-size:13.5px; color:var(--ink-muted); max-width:62ch; }
   .currently .dot{ position:relative; width:7px; height:7px; margin-top:6px; border-radius:50%; background:var(--accent); flex:none; }
@@ -296,6 +303,36 @@
   .cert-card .issuer.inprogress{ color:var(--accent-2); }
   .certs-sub{ font-size:12.5px; color:var(--ink-faint); margin:26px 0 12px; text-transform:uppercase; letter-spacing:.8px; font-family:"IBM Plex Mono",monospace; }
 
+  /* ---------- m340i deal checker (native tool view) ---------- */
+  .tool-intro{ font-size:15px; color:var(--ink-muted); max-width:60ch; line-height:1.6; margin:0 0 26px; }
+  .tool-card{ max-width:480px; }
+  .tool-card .field label .hint{ font-weight:400; color:var(--ink-faint); }
+  .tool-card select{
+    width:100%; font-family:inherit; font-size:14.5px; color:var(--ink);
+    background:var(--paper-raised); border:1px solid var(--line-strong); border-radius:4px; padding:10px 12px;
+  }
+  .tool-card select:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .toggle-group{ display:flex; gap:8px; margin-top:6px; }
+  .toggle-btn{
+    flex:1; padding:10px 8px; border:1px solid var(--line-strong); border-radius:4px;
+    background:var(--paper-raised); color:var(--ink-muted); font-size:13.5px; cursor:pointer;
+    text-align:center; font-family:inherit;
+  }
+  .toggle-btn.active{
+    border-color:var(--accent); background:color-mix(in srgb, var(--accent) 12%, transparent);
+    color:var(--accent); font-weight:600;
+  }
+  #result{ margin-top:22px; display:none; }
+  .result-card{ border-radius:5px; padding:18px 20px; border:1px solid var(--line); background:var(--paper); }
+  .verdict{ font-size:16px; font-weight:600; font-family:"Fraunces",serif; display:flex; align-items:center; gap:9px; margin-bottom:10px; }
+  .verdict-dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .price-row{ display:flex; justify-content:space-between; font-size:13.5px; padding:7px 0; border-top:1px solid var(--line); }
+  .price-row:first-of-type{ border-top:none; }
+  .price-row .label{ color:var(--ink-muted); }
+  .price-row .value{ font-weight:600; font-variant-numeric:tabular-nums; font-family:"IBM Plex Mono",monospace; }
+  .caveat{ font-size:12px; color:var(--ink-faint); margin-top:14px; line-height:1.5; }
+  .disclaimer{ font-size:11.5px; color:var(--ink-faint); margin-top:14px; line-height:1.5; }
+
   /* ---------- contact ---------- */
   .contact-layout{ display:grid; grid-template-columns:1.1fr .9fr; gap:32px; align-items:start; }
   .field{ margin-bottom:16px; }
@@ -367,7 +404,7 @@
         <a href="#home" data-view="home" role="menuitem">Home</a>
         <a href="#projects" data-view="projects" role="menuitem">Projects</a>
         <a href="#resume" data-view="resume" role="menuitem">Resume &amp; Skills</a>
-        <a href="m340i-deal-checker.html" role="menuitem">M340i Deal Checker</a>
+        <a href="#m340i" data-view="m340i" role="menuitem">M340i Deal Checker</a>
         <a href="#contact" data-view="contact" role="menuitem">Contact</a>
       </div>
     </div>
@@ -392,12 +429,15 @@
       <span class="eyebrow"><img class="eyebrow-logo" src="bentley-icon.png" alt="" width="21" height="30">Data Analytics &amp; AI · Bentley University</span>
       <h1 class="name">Isaiah Bomfim</h1>
       <p class="role">Sophomore data analytics major who likes turning raw data into decisions worth arguing about, using Python, SQL, and Power BI.</p>
-      <p class="bio">I like projects that start with a real question instead of a clean dataset. My latest one pulls live NBA statistics through a July 2026 trade, builds a database from scratch, and argues both sides of whether the deal actually made sense. I also work as a warehouse and sales associate at Best Buy, which is a big part of why I'm drawn to retail and operations analytics specifically, alongside financial operations and research.</p>
+      <p class="bio">I like projects that start with a real question instead of a clean dataset. I also work as a warehouse and sales associate at Best Buy, which is a big part of why I'm drawn to retail and operations analytics specifically, alongside financial operations and research.</p>
+
+      <p class="bio">Two most recent builds: the <a class="inline-link" href="#projects">NBA Trade Impact Analysis</a> pulls live stats through a July 2026 trade and argues both sides of whether Boston's deal actually made sense, and the <a class="inline-link" href="#m340i">M340i Deal Checker</a> is a fair-price tool I built for my favorite car after getting tired of guessing whether a listing was actually a good deal.</p>
 
       <p class="currently"><span class="dot" aria-hidden="true"></span>Currently: working at Best Buy, active in Bentley's A.I. Society, and open to Summer 2027 data &amp; AI internships.</p>
 
       <div class="cta-row">
         <a class="btn primary" href="#projects">View projects</a>
+        <a class="btn ghost" href="#m340i">Try the deal checker →</a>
         <a class="btn ghost" href="#resume">Resume &amp; skills →</a>
         <a class="btn ghost" href="resume.pdf" target="_blank" rel="noopener">Download résumé ↓</a>
       </div>
@@ -453,7 +493,7 @@
           <li>Data refreshes monthly rather than being a one-time snapshot</li>
         </ul>
         <div class="card-links">
-          <a href="m340i-deal-checker.html">Try the tool →</a>
+          <a href="#m340i">Try the tool →</a>
         </div>
       </div>
 
@@ -559,6 +599,61 @@
     </div>
   </section>
 
+  <section data-view="m340i" id="m340i" hidden>
+    <div class="section-head">
+      <h2 class="section-title">M340i Deal Checker</h2>
+    </div>
+    <p class="tool-intro">2020–2022 BMW M340i / M340i xDrive — estimate a fair price and check a listing against it, built from a regression on 213 active listings. I built this one for myself: it's my favorite car, and I got tired of guessing whether a listing was actually a good deal.</p>
+
+    <div class="card tool-card">
+      <div class="field">
+        <label for="year">Model year</label>
+        <select id="year">
+          <option value="2020">2020</option>
+          <option value="2021" selected>2021</option>
+          <option value="2022">2022</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Drivetrain</label>
+        <div class="toggle-group" id="drivetrainToggle">
+          <div class="toggle-btn" data-value="0">RWD</div>
+          <div class="toggle-btn active" data-value="1">xDrive</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="miles">Mileage</label>
+        <input type="number" id="miles" value="50000" min="0" step="1000">
+      </div>
+
+      <div class="field">
+        <label for="options">Number of extra options/packages installed <span class="hint">(0&ndash;20, leave at 5 if unsure)</span></label>
+        <input type="number" id="options" value="5" min="0" max="20" step="1">
+      </div>
+
+      <div class="field">
+        <label for="askingPrice">Asking price you're checking (optional)</label>
+        <input type="number" id="askingPrice" placeholder="e.g. 39500" min="0" step="500">
+      </div>
+
+      <button class="btn primary" type="button" onclick="checkDeal()" style="width:100%; justify-content:center;">Check this deal</button>
+
+      <div id="result"></div>
+
+      <p class="disclaimer">
+        Estimate built from a regression on 213 active 2020&ndash;2022 M340i listings
+        (Visor API). Average error ~6% ($2,356). Does not account for
+        condition, accident history, or service records &mdash; use as a screening tool,
+        not a purchase decision.
+      </p>
+      <p class="disclaimer" style="margin-top:6px;">
+        Data refreshed monthly. <strong>Last refreshed: <span id="lastRefreshed">September 21, 2026</span></strong>
+      </p>
+    </div>
+  </section>
+
   <section data-view="contact" id="contact" hidden>
     <div class="section-head">
       <h2 class="section-title">Contact</h2>
@@ -619,14 +714,14 @@
     nav.classList.toggle('scrolled', window.scrollY > 8);
   }, { passive:true });
 
-  const viewNames = ['home','projects','resume','contact'];
+  const viewNames = ['home','projects','resume','m340i','contact'];
   const views = {};
   viewNames.forEach(n => { views[n] = document.querySelector(`section[data-view="${n}"]`); });
   const menuBtn = document.getElementById('menuBtn');
   const menuPanel = document.getElementById('menuPanel');
   const menuLabel = document.getElementById('menuLabel');
   const menuLinks = document.querySelectorAll('.menu-panel a');
-  const labels = { home:'Home', projects:'Projects', resume:'Resume & Skills', contact:'Contact' };
+  const labels = { home:'Home', projects:'Projects', resume:'Resume & Skills', m340i:'M340i Deal Checker', contact:'Contact' };
 
   function openMenu(){ menuPanel.classList.add('open'); menuBtn.setAttribute('aria-expanded','true'); }
   function closeMenu(){ menuPanel.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false'); }
@@ -750,6 +845,88 @@
       });
     }
   })();
+
+  // ---------- M340i deal checker (native view, not a separate page) ----------
+  // Model coefficients: linear regression on log(price), fit on 213 listings.
+  // log(price) = intercept + b_miles*miles_10k + b_year*(year-2021) + b_xdrive*is_xdrive + b_opts*n_options
+  const MODEL = {
+    intercept: 10.881947457961928,
+    miles_10k: -0.05536113,
+    year_c: 0.02902555,
+    is_xdrive: 0.04566597,
+    n_options: 0.00018023,
+    mae_dollars: 2356 // cross-validated mean absolute error, used for the range +/- and verdict bands
+  };
+
+  function predictPrice(year, milesVal, isXdrive, nOptions) {
+    const miles10k = milesVal / 10000;
+    const yearC = year - 2021;
+    const logPrice = MODEL.intercept
+      + MODEL.miles_10k * miles10k
+      + MODEL.year_c * yearC
+      + MODEL.is_xdrive * isXdrive
+      + MODEL.n_options * nOptions;
+    return Math.exp(logPrice);
+  }
+
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  document.querySelectorAll('#drivetrainToggle .toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#drivetrainToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  function checkDeal() {
+    const year = parseInt(document.getElementById('year').value, 10);
+    const miles = parseFloat(document.getElementById('miles').value) || 0;
+    const nOptions = parseFloat(document.getElementById('options').value) || 0;
+    const isXdrive = parseInt(document.querySelector('#drivetrainToggle .toggle-btn.active').dataset.value, 10);
+    const askingRaw = document.getElementById('askingPrice').value;
+    const asking = askingRaw ? parseFloat(askingRaw) : null;
+
+    const predicted = predictPrice(year, miles, isXdrive, nOptions);
+    const low = predicted - MODEL.mae_dollars;
+    const high = predicted + MODEL.mae_dollars;
+
+    let verdictHtml = '';
+    if (asking !== null && asking > 0) {
+      const diffPct = ((asking - predicted) / predicted) * 100;
+      let label, color;
+      if (diffPct <= -12) { label = 'Excellent deal'; color = 'var(--good)'; }
+      else if (diffPct <= -6) { label = 'Good deal'; color = 'var(--good)'; }
+      else if (diffPct < 6) { label = 'Fair price'; color = 'var(--warning)'; }
+      else if (diffPct < 12) { label = 'Priced a bit high'; color = 'var(--orange)'; }
+      else { label = 'Overpriced'; color = 'var(--critical)'; }
+
+      const diffDollars = asking - predicted;
+      const diffSign = diffDollars >= 0 ? '+' : '−';
+
+      verdictHtml = `
+        <div class="verdict"><span class="verdict-dot" style="background:${color};"></span>${label}</div>
+        <div class="price-row"><span class="label">Asking price</span><span class="value">${fmt(asking)}</span></div>
+        <div class="price-row"><span class="label">Model estimate</span><span class="value">${fmt(predicted)}</span></div>
+        <div class="price-row"><span class="label">Difference</span><span class="value">${diffSign}${fmt(Math.abs(diffDollars))} (${diffPct.toFixed(1)}%)</span></div>
+        <div class="price-row"><span class="label">Likely fair range</span><span class="value">${fmt(low)} &ndash; ${fmt(high)}</span></div>
+      `;
+    } else {
+      verdictHtml = `
+        <div class="verdict"><span class="verdict-dot" style="background:var(--blue);"></span>Estimated fair price</div>
+        <div class="price-row"><span class="label">Model estimate</span><span class="value">${fmt(predicted)}</span></div>
+        <div class="price-row"><span class="label">Likely fair range</span><span class="value">${fmt(low)} &ndash; ${fmt(high)}</span></div>
+      `;
+    }
+
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = `<div class="result-card">${verdictHtml}
+      <div class="caveat">Based on mileage, model year, drivetrain, and option count only.
+      Condition, accident history, and location aren't factored in.</div>
+    </div>`;
+    resultDiv.style.display = 'block';
+  }
 </script>
 
 </body>
